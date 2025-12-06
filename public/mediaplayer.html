@@ -37,20 +37,32 @@
 
     <main class="player-main">
       <div class="player-info">
-        <div class="player-left" id="player-title">Loading…</div>
+        <div class="player-left">
+          NOW PLAYING: <span id="player-title">loading…</span>
+        </div>
         <div class="player-actions">
-          <a id="open-direct" href="#" target="_blank" rel="noreferrer">OPEN RAW</a>
-          <button type="button" id="reload-btn">RELOAD</button>
+          <a
+            id="open-direct"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="display:none"
+          >
+            open raw
+          </a>
+          <button id="reload-btn" type="button" style="display:none">
+            reload
+          </button>
+          <a href="media.html">back to media</a>
         </div>
       </div>
 
       <div class="player-frame-wrap" id="frame-wrap">
-        <!-- Scramjet will inject its own iframe here -->
+        <!-- Scramjet will inject its iframe here -->
       </div>
 
       <div class="no-src" id="no-src" style="display:none;">
-        no media source provided.<br />
-        go back and pick something from the media page.
+        no media loaded. go back to the media page and pick something.
       </div>
     </main>
 
@@ -61,7 +73,7 @@
       }
 
       async function setupScramjetAndPlay() {
-        const src = getParam("src");
+        let src = getParam("src");
         const title = getParam("title") || "Media";
 
         const titleEl = document.getElementById("player-title");
@@ -80,8 +92,38 @@
           return;
         }
 
-        // direct link (unproxied) for debugging
-        if (openDirect) openDirect.href = src;
+        // decode query param
+        src = decodeURIComponent(src).trim();
+
+        // If src is already a Scramjet path like "/scramjet/https://..."
+        // or "/scram/https://...", strip that prefix so Scramjet sees
+        // the actual URL, not the proxied path.
+        if (src.startsWith("/scramjet/")) {
+          src = src.slice("/scramjet/".length);
+        } else if (src.startsWith("/scram/")) {
+          src = src.slice("/scram/".length);
+        }
+
+        // now src should be like "https://cinemaos.live/..." etc.
+        if (!/^https?:\/\//i.test(src)) {
+          console.error("mediaplayer: src is not a valid http/https URL:", src);
+          if (wrap) wrap.style.display = "none";
+          if (noSrc) {
+            noSrc.style.display = "flex";
+            noSrc.textContent = "invalid media URL.";
+          }
+          if (openDirect) openDirect.style.display = "none";
+          if (reloadBtn) reloadBtn.style.display = "none";
+          return;
+        }
+
+        if (openDirect) {
+          openDirect.href = src;
+          openDirect.style.display = "inline-flex";
+        }
+        if (reloadBtn) {
+          reloadBtn.style.display = "inline-flex";
+        }
 
         // --- register service worker ---
         try {
@@ -131,13 +173,14 @@
           }
         }
 
-        // --- Create Scramjet iframe inside our wrapper ---
         if (!wrap) {
           console.error("No frame wrapper found");
           return;
         }
 
+        // clear any previous frame
         wrap.innerHTML = "";
+
         const frameObj = scramjet.createFrame();
         frameObj.frame.id = "media-frame";
         frameObj.frame.style.width = "100%";
@@ -146,6 +189,7 @@
 
         wrap.appendChild(frameObj.frame);
 
+        // Give Scramjet the REAL URL, not a /scram/ path
         frameObj.go(src);
 
         if (reloadBtn) {

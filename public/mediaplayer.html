@@ -1,147 +1,185 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Media Player</title>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>S0LACE • Media Player</title>
 
-  <link rel="stylesheet" href="index.css" />
+    <link rel="shortcut icon" content="favicon.ico" />
+    <link rel="stylesheet" href="index.css" />
 
-  <!-- Scramjet + Baremux -->
-  <script src="/scram/scramjet.all.js"></script>
-  <script src="/baremux/index.js" defer></script>
-  <script src="/epoxy/index.js" defer></script>
-  <script src="register-sw.js" defer></script>
+    <!-- BareMux + Epoxy for Scramjet backend -->
+    <script src="baremux/index.js"></script>
+    <script src="epoxy/index.js"></script>
 
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      color: white;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+    <!-- Service worker + global stuff -->
+    <script src="register-sw.js" defer></script>
+    <script src="global-hub.js" defer></script>
 
-    #player-frame {
-      border: none;
-      width: 100vw;
-      height: 100vh;
-    }
-
-    /* Loading Overlay */
-    #loading-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      z-index: 9999;
-    }
-
-    #loading-sub {
-      font-size: 15px;
-      opacity: 0.6;
-    }
-
-    /* Fullscreen Button */
-    #fullscreen-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid white;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 10000;
-      backdrop-filter: blur(8px);
-    }
-  </style>
-</head>
-
-<body>
-  <div id="loading-overlay">
-    <div>Loading media…</div>
-    <div id="loading-sub">This may take a moment.</div>
-  </div>
-
-  <iframe id="player-frame" allow="fullscreen; autoplay"></iframe>
-  <div id="fullscreen-btn">Fullscreen</div>
-
-  <script>
-    const urlParams = new URLSearchParams(location.search);
-    const src = urlParams.get("src");
-    const title = urlParams.get("title") || "Media";
-
-    document.title = title;
-
-    const iframe = document.getElementById("player-frame");
-    const loading = document.getElementById("loading-overlay");
-    const loadingSub = document.getElementById("loading-sub");
-
-    const { ScramjetController } = $scramjetLoadController();
-    const scramjet = new ScramjetController({
-      files: {
-        wasm: '/scram/scramjet.wasm.wasm',
-        all: '/scram/scramjet.all.js',
-        sync: '/scram/scramjet.sync.js'
+    <!-- tiny local styles for loading overlay -->
+    <style>
+      .player-loading {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 9px;
+        color: var(--fg-dim);
+        background: radial-gradient(
+          circle at top,
+          rgba(0, 0, 0, 0.95),
+          rgba(0, 0, 0, 0.98)
+        );
+        z-index: 2;
+        text-align: center;
+        padding: 16px;
       }
-    });
-
-    scramjet.init();
-    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-
-    async function setupScramjet() {
-      try {
-        await registerSW();
-      } catch (e) {
-        console.warn("SW failed to register but continuing anyway");
+      .player-loading span {
+        margin-top: 6px;
+        opacity: 0.7;
       }
-
-      let wispUrl =
-        (location.protocol === "https:" ? "wss" : "ws") +
-        "://" + location.host + "/wisp/";
-
-      if ((await connection.getTransport()) !== "/epoxy/index.mjs") {
-        await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+      .player-frame-wrap {
+        position: relative;
       }
+    </style>
+  </head>
 
-      const frameObj = scramjet.createFrame();
-      frameObj.frame.id = "sj-frame";
-      frameObj.frame.style.display = "none";
-      document.body.appendChild(frameObj.frame);
+  <body class="media-player-page">
+    <header class="site-header">
+      <div class="site-title">
+        S0LACE
+      </div>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="games.html">Games</a>
+        <a href="media.html" class="active">Media</a>
+        <a href="apps.html">Apps</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+    </header>
 
-      // Soft loading timeout
-      setTimeout(() => {
-        loadingSub.textContent = "Still loading… some media hosts take a long time.";
-      }, 25000);
+    <main class="player-main">
+      <div class="player-info">
+        <div class="player-left">
+          <span id="player-title">Loading…</span>
+        </div>
+        <div class="player-actions">
+          <a href="media.html">← BACK TO MEDIA</a>
+          <button id="open-new-tab">OPEN IN NEW TAB</button>
+        </div>
+      </div>
 
-      // Attempt to load target
-      frameObj.go(src);
+      <div class="player-frame-wrap">
+        <!-- loading overlay -->
+        <div id="player-loading" class="player-loading">
+          CONNECTING TO PROXY…
+          <span id="player-loading-sub">
+            If this takes more than a few seconds, the media host or proxy might be slow.
+          </span>
+        </div>
 
-      // Detect load
-      frameObj.frame.addEventListener("load", () => {
-        loading.style.display = "none";
+        <iframe
+          id="media-frame"
+          src="about:blank"
+          allowfullscreen
+          allow="fullscreen; picture-in-picture; encrypted-media"
+        ></iframe>
+      </div>
 
-        iframe.src = frameObj.frame.src;
-        frameObj.frame.remove();
-      });
-    }
+      <div id="player-error" class="no-src" style="display:none;">
+        No media URL provided.
+      </div>
+    </main>
 
-    setupScramjet();
+    <script>
+      (async () => {
+        const params = new URLSearchParams(window.location.search);
+        const src = params.get("src");
+        const title = params.get("title") || "Untitled";
 
-    // Fullscreen button
-    document.getElementById("fullscreen-btn").addEventListener("click", () => {
-      if (iframe.requestFullscreen) iframe.requestFullscreen();
-      else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
-    });
-  </script>
-</body>
+        const frame = document.getElementById("media-frame");
+        const titleEl = document.getElementById("player-title");
+        const errorEl = document.getElementById("player-error");
+        const frameWrap = document.querySelector(".player-frame-wrap");
+        const openNewTabBtn = document.getElementById("open-new-tab");
+        const loadingEl = document.getElementById("player-loading");
+        const loadingSub = document.getElementById("player-loading-sub");
+
+        if (titleEl) titleEl.textContent = title;
+
+        if (!src) {
+          if (frameWrap) frameWrap.style.display = "none";
+          if (errorEl) {
+            errorEl.style.display = "flex";
+            errorEl.textContent = "No media URL provided.";
+          }
+          return;
+        }
+
+        // Make "open in new tab" always available
+        if (openNewTabBtn) {
+          openNewTabBtn.addEventListener("click", () => {
+            window.open(src, "_blank");
+          });
+        }
+
+        // 1) ENSURE BAREMUX TRANSPORT BEFORE HITTING /scramjet/…
+        try {
+          const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+          const wispUrl =
+            (location.protocol === "https:" ? "wss" : "ws") +
+            "://" +
+            location.host +
+            "/wisp/";
+
+          if ((await connection.getTransport()) !== "/epoxy/index.mjs") {
+            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+          }
+          console.log("BareMux transport ready in mediaplayer tab");
+        } catch (err) {
+          console.error("Failed to init BareMux transport (mediaplayer)", err);
+          if (loadingSub) {
+            loadingSub.textContent =
+              "Proxy transport failed to init. The page may still load, but some hosts will break.";
+          }
+        }
+
+        // 2) LOADING TIMEOUT HINTS
+        let longTimeout = setTimeout(() => {
+          if (loadingSub) {
+            loadingSub.textContent =
+              "This is taking longer than usual. The media host or proxy might be slow or timing out.";
+          }
+        }, 8000);
+
+        let hardTimeout = setTimeout(() => {
+          if (loadingEl) {
+            loadingEl.style.display = "none";
+          }
+          if (errorEl) {
+            errorEl.style.display = "flex";
+            errorEl.textContent =
+              "The media did not finish loading. It may be blocked, down, or the proxy hit a timeout.";
+          }
+        }, 25000); // 25s hard fail
+
+        // 3) SET IFRAME SRC + HANDLE LOAD
+        if (frame) {
+          frame.addEventListener("load", () => {
+            // If we got any kind of load event, kill the loading overlay.
+            if (loadingEl) loadingEl.style.display = "none";
+            clearTimeout(longTimeout);
+            clearTimeout(hardTimeout);
+          });
+
+          frame.src = src; // already /scramjet/https://... from media.html
+        }
+      })();
+    </script>
+  </body>
 </html>

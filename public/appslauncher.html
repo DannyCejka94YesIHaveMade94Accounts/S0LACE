@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit-no"
     />
     <title>S0LACE • App Launcher</title>
 
@@ -83,8 +83,9 @@
           </span>
         </div>
 
+        <!-- use SAME id as movie player so index.css sizing works -->
         <iframe
-          id="app-frame"
+          id="media-frame"
           src="about:blank"
           allowfullscreen
           allow="fullscreen; picture-in-picture; encrypted-media"
@@ -102,7 +103,7 @@
         const src = params.get("src");
         const title = params.get("title") || "Untitled";
 
-        const frame = document.getElementById("app-frame");
+        const frame = document.getElementById("media-frame");
         const titleEl = document.getElementById("player-title");
         const errorEl = document.getElementById("player-error");
         const frameWrap = document.querySelector(".player-frame-wrap");
@@ -121,14 +122,14 @@
           return;
         }
 
-        // "OPEN IN NEW TAB" always available
+        // "OPEN IN NEW TAB" – uses the exact src from apps.html
         if (openNewTabBtn) {
           openNewTabBtn.addEventListener("click", () => {
             window.open(src, "_blank");
           });
         }
 
-        // 1) Ensure BareMux transport before hitting /scramjet/…
+        // 1) Ensure BareMux transport before using /scramjet/…
         try {
           const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
           const wispUrl =
@@ -149,7 +150,7 @@
           }
         }
 
-        // 2) Loading timeouts for nicer UX
+        // 2) Loading UX
         let longTimeout = setTimeout(() => {
           if (loadingSub) {
             loadingSub.textContent =
@@ -158,9 +159,7 @@
         }, 8000);
 
         let hardTimeout = setTimeout(() => {
-          if (loadingEl) {
-            loadingEl.style.display = "none";
-          }
+          if (loadingEl) loadingEl.style.display = "none";
           if (errorEl) {
             errorEl.style.display = "flex";
             errorEl.textContent =
@@ -176,7 +175,7 @@
             clearTimeout(hardTimeout);
           });
 
-          // src is already /scramjet/https://… from apps.html
+          // src already like /scramjet/https://... from apps.html
           frame.src = src;
         }
       })();

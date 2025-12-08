@@ -19,7 +19,6 @@
     <script src="register-sw.js" defer></script>
     <script src="global-hub.js" defer></script>
 
-    <!-- tiny local styles for loading overlay -->
     <style>
       .player-loading {
         position: absolute;
@@ -51,9 +50,7 @@
 
   <body class="media-player-page">
     <header class="site-header">
-      <div class="site-title">
-        S0LACE
-      </div>
+      <div class="site-title">S0LACE</div>
       <nav class="site-nav">
         <a href="index.html">Home</a>
         <a href="games.html">Games</a>
@@ -74,7 +71,6 @@
       </div>
 
       <div class="player-frame-wrap">
-        <!-- loading overlay -->
         <div id="player-loading" class="player-loading">
           CONNECTING TO PROXY…
           <span id="player-loading-sub">
@@ -120,14 +116,20 @@
           return;
         }
 
-        // Make "open in new tab" always available
+        /* -------------------------------------------
+           NEW TAB BUTTON — convert proxied URL -> direct VidFast
+        -------------------------------------------- */
         if (openNewTabBtn) {
           openNewTabBtn.addEventListener("click", () => {
-            window.open(src, "_blank");
+            // src looks like: /scramjet/https://vidfast.pro/movie/123
+            let direct = src.replace("/scramjet/", "");
+            window.open(direct, "_blank");
           });
         }
 
-        // 1) ENSURE BAREMUX TRANSPORT BEFORE HITTING /scramjet/…
+        /* -------------------------------------------
+           BAREMUX INIT
+        -------------------------------------------- */
         try {
           const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
           const wispUrl =
@@ -148,7 +150,9 @@
           }
         }
 
-        // 2) LOADING TIMEOUT HINTS
+        /* -------------------------------------------
+           TIMEOUTS
+        -------------------------------------------- */
         let longTimeout = setTimeout(() => {
           if (loadingSub) {
             loadingSub.textContent =
@@ -157,26 +161,25 @@
         }, 8000);
 
         let hardTimeout = setTimeout(() => {
-          if (loadingEl) {
-            loadingEl.style.display = "none";
-          }
+          if (loadingEl) loadingEl.style.display = "none";
           if (errorEl) {
             errorEl.style.display = "flex";
             errorEl.textContent =
               "The media did not finish loading. It may be blocked, down, or the proxy hit a timeout.";
           }
-        }, 25000); // 25s hard fail
+        }, 25000);
 
-        // 3) SET IFRAME SRC + HANDLE LOAD
+        /* -------------------------------------------
+           LOAD IFRAME
+        -------------------------------------------- */
         if (frame) {
           frame.addEventListener("load", () => {
-            // If we got any kind of load event, kill the loading overlay.
             if (loadingEl) loadingEl.style.display = "none";
             clearTimeout(longTimeout);
             clearTimeout(hardTimeout);
           });
 
-          frame.src = src; // already /scramjet/https://... from media.html
+          frame.src = src;
         }
       })();
     </script>

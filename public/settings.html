@@ -16,9 +16,7 @@
 
   <body>
     <header class="site-header">
-      <div class="site-title">
-        S0LACE
-      </div>
+      <div class="site-title">S0LACE</div>
       <nav class="site-nav">
         <a href="index.html">Home</a>
         <a href="games.html">Games</a>
@@ -28,96 +26,49 @@
     </header>
 
     <main>
-      <div class="page-header">
-        <h1>Settings</h1>
-      </div>
+      <div class="page-header"><h1>Settings</h1></div>
 
       <!-- TAB CLOAKING -->
       <section class="home-panel" style="margin-bottom: 16px;">
         <div class="motd-label">TAB CLOAKING</div>
 
-        <!-- Presets -->
         <div style="margin-top: 10px; font-size: 8px;">
           <div style="margin-bottom: 6px;">PRESETS &gt;</div>
           <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-            <button type="button" class="proxy-btn" data-cloak-preset="drive">
-              Google Drive
-            </button>
-            <button type="button" class="proxy-btn" data-cloak-preset="schoology">
-              Schoology
-            </button>
-            <button type="button" class="proxy-btn" data-cloak-preset="docs">
-              Google Docs
-            </button>
-            <button type="button" class="proxy-btn" data-cloak-preset="google">
-              Google
-            </button>
+            <button type="button" class="proxy-btn" data-cloak-preset="drive">Google Drive</button>
+            <button type="button" class="proxy-btn" data-cloak-preset="schoology">Schoology</button>
+            <button type="button" class="proxy-btn" data-cloak-preset="docs">Google Docs</button>
+            <button type="button" class="proxy-btn" data-cloak-preset="google">Google</button>
           </div>
         </div>
 
-        <!-- Custom -->
-        <div
-          style="
-            margin-top: 14px;
-            border-top: 1px solid #262626;
-            padding-top: 10px;
-          "
-        >
+        <div style="margin-top: 14px; border-top: 1px solid #262626; padding-top: 10px;">
           <div class="motd-label">CUSTOM</div>
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              font-size: 8px;
-            "
-          >
+
+          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 8px;">
             <label>
               Title<br />
               <input
                 id="cloak-title"
                 type="text"
                 placeholder="e.g. My Drive - Google Drive"
-                style="
-                  width: 100%;
-                  margin-top: 3px;
-                  padding: 6px 8px;
-                  border-radius: 0;
-                  border: 2px solid #262626;
-                  background: #000;
-                  color: #f5f5f5;
-                  font-size: 8px;
-                  font-family: 'Press Start 2P', system-ui, sans-serif;
-                "
+                style="width: 100%; margin-top: 3px; padding: 6px 8px; border: 2px solid #262626; background: #000; color: #f5f5f5; font-size: 8px; font-family: 'Press Start 2P', system-ui, sans-serif;"
               />
             </label>
+
             <label>
-              Favicon URL <br />
+              Favicon URL<br />
               <input
                 id="cloak-icon"
                 type="text"
                 placeholder="https://.../favicon.ico"
-                style="
-                  width: 100%;
-                  margin-top: 3px;
-                  padding: 6px 8px;
-                  border-radius: 0;
-                  border: 2px solid #262626;
-                  background: #000;
-                  color: #f5f5f5;
-                  font-size: 8px;
-                  font-family: 'Press Start 2P', system-ui, sans-serif;
-                "
+                style="width: 100%; margin-top: 3px; padding: 6px 8px; border: 2px solid #262626; background: #000; color: #f5f5f5; font-size: 8px; font-family: 'Press Start 2P', system-ui, sans-serif;"
               />
             </label>
 
             <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <button type="button" class="proxy-btn" id="apply-custom-cloak">
-                Apply
-              </button>
-              <button type="button" class="proxy-btn" id="reset-cloak">
-                Reset
-              </button>
+              <button type="button" class="proxy-btn" id="apply-custom-cloak">Apply</button>
+              <button type="button" class="proxy-btn" id="reset-cloak">Reset</button>
             </div>
 
             <div id="cloak-status" style="font-size: 8px; color: #7f7f7f;"></div>
@@ -125,154 +76,69 @@
         </div>
       </section>
 
-      <!-- ACCENT / THEME -->
+      <!-- ACCENT -->
       <section class="home-panel" style="margin-bottom: 16px;">
         <div class="motd-label">ACCENT COLOR</div>
 
         <div style="margin-top: 10px; font-size: 8px;">
-          <label style="display: flex; align-items: center; gap: 6px;">
-            <input
-              type="radio"
-              name="accent"
-              value="green"
-              class="accent-radio"
-            />
-            green (default)
-          </label>
-
-          <label style="display: flex; align-items: center; gap: 6px;">
-            <input
-              type="radio"
-              name="accent"
-              value="violet"
-              class="accent-radio"
-            />
-            violet
-          </label>
-
-          <label style="display: flex; align-items: center; gap: 6px;">
-            <input
-              type="radio"
-              name="accent"
-              value="amber"
-              class="accent-radio"
-            />
-            amber
-          </label>
-
-          <label style="display: flex; align-items: center; gap: 6px;">
-            <input
-              type="radio"
-              name="accent"
-              value="white"
-              class="accent-radio"
-            />
-            white
-          </label>
+          <label><input type="radio" name="accent" value="green" class="accent-radio" /> green (default)</label>
+          <label><input type="radio" name="accent" value="violet" class="accent-radio" /> violet</label>
+          <label><input type="radio" name="accent" value="amber" class="accent-radio" /> amber</label>
+          <label><input type="radio" name="accent" value="white" class="accent-radio" /> white</label>
         </div>
       </section>
 
       <!-- THEME -->
       <section class="home-panel" style="margin-bottom: 16px;">
         <div class="motd-label">THEME</div>
+
         <div style="margin-top: 10px; font-size: 8px;">
-          <label style="display: flex; align-items: center; gap: 6px;">
-            <input
-              type="radio"
-              name="theme"
-              value="dark"
-              class="theme-radio"
-              checked
-            />
-            dark
-          </label>
-          <label style="display: flex; align-items: center; gap: 6px;">
-            <input
-              type="radio"
-              name="theme"
-              value="baby"
-              class="theme-radio"
-            />
-            blue
-          </label>
-          <label style="display: flex; align-items: center; gap: 6px;">
-            <input
-              type="radio"
-              name="theme"
-              value="xmas"
-              class="theme-radio"
-            />
-            green
-          </label>
+          <label><input type="radio" name="theme" value="dark" class="theme-radio" /> dark</label>
+          <label><input type="radio" name="theme" value="baby" class="theme-radio" /> blue</label>
+          <label><input type="radio" name="theme" value="xmas" class="theme-radio" /> green</label>
         </div>
       </section>
 
       <!-- BACKGROUND -->
       <section class="home-panel" style="margin-bottom: 16px;">
         <div class="motd-label">BACKGROUND</div>
+
         <div style="margin-top: 10px; font-size: 8px;">
-          <div style="margin-bottom: 6px;">
-            MODE &gt;
-          </div>
+          <div style="margin-bottom: 6px;">MODE &gt;</div>
+
           <select
             id="bg-mode"
-            style="
-              font-family: 'Press Start 2P', system-ui, sans-serif;
-              font-size: 8px;
-              padding: 6px 8px;
-              border-radius: 0;
-              border: 2px solid #262626;
-              background: #000;
-              color: #f5f5f5;
-              width: 100%;
-            "
+            style="font-family: 'Press Start 2P'; font-size: 8px; padding: 6px 8px; border: 2px solid #262626; background: #000; color: #f5f5f5; width: 100%;"
           >
             <option value="default">DEFAULT (CRT GRID)</option>
             <option value="gif-stars">STARRY GIF</option>
             <option value="custom">CUSTOM IMAGE URL</option>
           </select>
 
-          <div
-            id="bg-url-row"
-            style="margin-top: 8px; display: none; flex-direction: column; gap: 4px;"
-          >
+          <div id="bg-url-row" style="margin-top: 8px; display: none; flex-direction: column; gap: 4px;">
             <label>
               Image URL<br />
               <input
                 id="bg-url"
                 type="text"
-                placeholder="https://example.com/your-bg.gif"
-                style="
-                  width: 100%;
-                  margin-top: 3px;
-                  padding: 6px 8px;
-                  border-radius: 0;
-                  border: 2px solid #262626;
-                  background: #000;
-                  color: #f5f5f5;
-                  font-size: 8px;
-                  font-family: 'Press Start 2P', system-ui, sans-serif;
-                "
+                placeholder="https://example.com/bg.gif"
+                style="width: 100%; margin-top: 3px; padding: 6px 8px; border: 2px solid #262626; background: #000; color: #f5f5f5; font-size: 8px; font-family: 'Press Start 2P';"
               />
             </label>
           </div>
         </div>
       </section>
 
-      <!-- STORAGE / RESET -->
+      <!-- STORAGE -->
       <section class="home-panel">
         <div class="motd-label">STORAGE</div>
         <div style="margin-top: 8px; font-size: 8px; color: #7f7f7f;">
-          Settings are stored in <span style="color: var(--accent);">localStorage</span>
-          on this device only.
+          Settings are stored in <span style="color: var(--accent);">localStorage</span>.
         </div>
+
         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
-          <button type="button" class="proxy-btn" id="btn-reset-settings">
-            Reset S0LACE settings
-          </button>
-          <button type="button" class="proxy-btn" id="btn-clear-media">
-            Clear media cache
-          </button>
+          <button type="button" class="proxy-btn" id="btn-reset-settings">Reset S0LACE settings</button>
+          <button type="button" class="proxy-btn" id="btn-clear-media">Clear media cache</button>
         </div>
       </section>
     </main>
@@ -284,26 +150,55 @@
       const applyCustomBtn = document.getElementById("apply-custom-cloak");
       const resetBtn = document.getElementById("reset-cloak");
       const statusEl = document.getElementById("cloak-status");
-      const accentRadios = document.querySelectorAll(".accent-radio");
 
+      const accentRadios = document.querySelectorAll(".accent-radio");
       const themeRadios = document.querySelectorAll(".theme-radio");
+
       const bgModeSelect = document.getElementById("bg-mode");
       const bgUrlRow = document.getElementById("bg-url-row");
       const bgUrlInput = document.getElementById("bg-url");
+
       const btnResetSettings = document.getElementById("btn-reset-settings");
       const btnClearMedia = document.getElementById("btn-clear-media");
 
       const CLOAK_KEY = "s0laceTabCloak";
-      const THEME_KEY = "s0laceTheme";
-      const BG_MODE_KEY = "s0laceBgMode";
-      const BG_URL_KEY = "s0laceBgUrl";
-      const MEDIA_CACHE_KEY = "s0laceMediaCache";
 
+      function saveCloakState(obj) {
+        localStorage.setItem(
+          CLOAK_KEY,
+          JSON.stringify({
+            enabled: true,
+            title: obj.title,
+            iconHref: obj.iconHref || "",
+          })
+        );
+      }
+
+      function loadCloakState() {
+        try {
+          return JSON.parse(localStorage.getItem(CLOAK_KEY));
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function updateStatus(msg) {
+        statusEl.textContent = msg || "";
+      }
+
+      function syncAccentRadios(acc) {
+        accentRadios.forEach(r => (r.checked = r.value === acc));
+      }
+
+      function syncThemeRadios(t) {
+        themeRadios.forEach(r => (r.checked = r.value === t));
+      }
+
+      // ---- cloak presets ----
       const PRESETS = {
         drive: {
           title: "My Drive - Google Drive",
-          iconHref:
-            "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png",
+          iconHref: "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png",
         },
         schoology: {
           title: "Schoology",
@@ -311,8 +206,7 @@
         },
         docs: {
           title: "Document - Google Docs",
-          iconHref:
-            "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
+          iconHref: "https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico",
         },
         google: {
           title: "Google",
@@ -320,85 +214,29 @@
         },
       };
 
-      function saveCloakState(obj) {
-        try {
-          localStorage.setItem(
-            CLOAK_KEY,
-            JSON.stringify({
-              enabled: true,
-              title: obj.title,
-              iconHref: obj.iconHref || "",
-            })
-          );
-        } catch (_) {}
-      }
-
-      function loadCloakState() {
-        try {
-          const raw = localStorage.getItem(CLOAK_KEY);
-          if (!raw) return null;
-          return JSON.parse(raw);
-        } catch (_) {
-          return null;
-        }
-      }
-
-      function updateStatus(msg) {
-        if (!statusEl) return;
-        statusEl.textContent = msg || "";
-      }
-
-      function syncAccentRadios(current) {
-        accentRadios.forEach((r) => {
-          r.checked = r.value === current;
-        });
-      }
-
-      function syncThemeRadios(current) {
-        themeRadios.forEach((r) => {
-          r.checked = r.value === current;
-        });
-      }
-
-      // ---- preset buttons ----
-      presetButtons.forEach((btn) => {
+      presetButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-          const key = btn.getAttribute("data-cloak-preset");
-          const preset = PRESETS[key];
-          if (!preset || !window.S0LACE) return;
+          const preset = PRESETS[btn.dataset.cloakPreset];
+          if (!preset) return;
 
-          window.S0LACE.applyTabCloak(
-            {
-              enabled: true,
-              title: preset.title,
-              iconHref: preset.iconHref,
-            },
-            true
-          );
+          window.S0LACE.applyTabCloak(preset, true);
           saveCloakState(preset);
 
           titleInput.value = preset.title;
-          iconInput.value = preset.iconHref || "";
+          iconInput.value = preset.iconHref;
           updateStatus("Preset applied.");
         });
       });
 
       // ---- custom cloak ----
       applyCustomBtn.addEventListener("click", () => {
-        if (!window.S0LACE) return;
-        const title = titleInput.value.trim();
-        const iconHref = iconInput.value.trim();
-
-        if (!title) {
-          updateStatus("Custom title is required.");
-          return;
-        }
-
         const cfg = {
           enabled: true,
-          title,
-          iconHref,
+          title: titleInput.value.trim(),
+          iconHref: iconInput.value.trim(),
         };
+
+        if (!cfg.title) return updateStatus("Custom title required.");
 
         window.S0LACE.applyTabCloak(cfg, true);
         saveCloakState(cfg);
@@ -406,114 +244,85 @@
       });
 
       resetBtn.addEventListener("click", () => {
-        if (!window.S0LACE) return;
         window.S0LACE.clearTabCloak(true);
-        try {
-          localStorage.removeItem(CLOAK_KEY);
-        } catch (_) {}
+        localStorage.removeItem(CLOAK_KEY);
         titleInput.value = "";
         iconInput.value = "";
         updateStatus("Cloak reset.");
       });
 
-      // ---- accent radios ----
-      accentRadios.forEach((radio) => {
-        radio.addEventListener("change", () => {
-          if (!radio.checked || !window.S0LACE) return;
-          window.S0LACE.applyAccent(radio.value, true);
-        });
-      });
+      // ---- accent ----
+      accentRadios.forEach(r =>
+        r.addEventListener("change", () => {
+          if (r.checked) window.S0LACE.applyAccent(r.value, true);
+        })
+      );
 
-      // ---- theme radios ----
-      themeRadios.forEach((radio) => {
-        radio.addEventListener("change", () => {
-          if (!radio.checked || !window.S0LACE) return;
-          window.S0LACE.applyTheme(radio.value, true);
-        });
-      });
+      // ---- theme ----
+      themeRadios.forEach(r =>
+        r.addEventListener("change", () => {
+          if (r.checked) window.S0LACE.applyTheme(r.value, true);
+        })
+      );
 
-      // ---- background controls ----
+      // ---- background ----
       bgModeSelect.addEventListener("change", () => {
-        if (!window.S0LACE) return;
         const mode = bgModeSelect.value;
-        if (mode === "custom") {
-          bgUrlRow.style.display = "flex";
-        } else {
-          bgUrlRow.style.display = "none";
-        }
         const url = mode === "custom" ? bgUrlInput.value.trim() : "";
+
+        bgUrlRow.style.display = mode === "custom" ? "flex" : "none";
         window.S0LACE.applyBackground(mode, url, true);
       });
 
       bgUrlInput.addEventListener("blur", () => {
-        if (!window.S0LACE) return;
-        if (bgModeSelect.value !== "custom") return;
-        const url = bgUrlInput.value.trim();
-        window.S0LACE.applyBackground("custom", url, true);
+        if (bgModeSelect.value === "custom") {
+          window.S0LACE.applyBackground("custom", bgUrlInput.value.trim(), true);
+        }
       });
 
-      // ---- reset everything for this device ----
+      // ---- reset all settings ----
       btnResetSettings.addEventListener("click", () => {
-        if (
-          !confirm(
-            "Reset S0LACE settings on THIS device? Themes, background, accent, cloaking etc will revert."
-          )
-        ) {
-          return;
-        }
+        if (!confirm("Reset all S0LACE settings?")) return;
 
-        const keysToKill = [
+        [
           CLOAK_KEY,
           "s0laceAccent",
-          THEME_KEY,
-          BG_MODE_KEY,
-          BG_URL_KEY,
+          "s0laceTheme",
+          "s0laceBgMode",
+          "s0laceBgUrl",
           "solace-tab-title",
           "solace-tab-favicon",
-          MEDIA_CACHE_KEY,
-        ];
-
-        keysToKill.forEach((k) => {
-          try {
-            localStorage.removeItem(k);
-          } catch (_) {}
-        });
+          "s0laceMediaCache",
+        ].forEach(k => localStorage.removeItem(k));
 
         location.reload();
       });
 
       btnClearMedia.addEventListener("click", () => {
-        try {
-          localStorage.removeItem(MEDIA_CACHE_KEY);
-        } catch (_) {}
-        alert("Media cache cleared (if any was stored).");
+        localStorage.removeItem("s0laceMediaCache");
+        alert("Media cache cleared.");
       });
 
-      // ---- initial load from global-hub ----
-      window.addEventListener("s0lace:settingsLoaded", (evt) => {
-        const accent = evt.detail?.accent || "green";
+      // ---- sync values on load ----
+      window.addEventListener("s0lace:settingsLoaded", evt => {
+        const { accent, theme, bgMode, bgUrl } = evt.detail;
+
         syncAccentRadios(accent);
-
-        const saved = loadCloakState();
-        if (saved && saved.title) {
-          titleInput.value = saved.title || "";
-          iconInput.value = saved.iconHref || "";
-          updateStatus("Cloak is currently active.");
-        } else {
-          updateStatus("No cloak active.");
-        }
-
-        const theme = evt.detail?.theme || "dark";
         syncThemeRadios(theme);
 
-        const bgMode = evt.detail?.bgMode || "default";
-        const bgUrl = evt.detail?.bgUrl || "";
         bgModeSelect.value = bgMode;
         if (bgMode === "custom") {
           bgUrlRow.style.display = "flex";
           bgUrlInput.value = bgUrl;
+        }
+
+        const saved = loadCloakState();
+        if (saved) {
+          titleInput.value = saved.title || "";
+          iconInput.value = saved.iconHref || "";
+          updateStatus("Cloak is active.");
         } else {
-          bgUrlRow.style.display = "none";
+          updateStatus("No cloak active.");
         }
       });
     </script>

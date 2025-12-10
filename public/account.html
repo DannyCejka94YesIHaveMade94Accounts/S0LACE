@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S0LACE • Account</title>
+
+  <link rel="stylesheet" href="index.css">
+  <script src="global-hub.js" defer></script>
+  <script type="module" src="firebase.js"></script>
+
+  <style>
+    .account-panel {
+      max-width: 420px;
+      margin: 0 auto;
+      font-size: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      background: #000;
+      color: var(--fg);
+      border: 2px solid var(--border-hard);
+      font-family: "Press Start 2P";
+      font-size: 8px;
+    }
+
+    .account-btn {
+      padding: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      font-size: 9px;
+      font-family: "Press Start 2P";
+      cursor: pointer;
+    }
+
+    .account-btn:hover {
+      box-shadow: 0 0 10px var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="site-title">S0LACE</div>
+  <nav class="site-nav">
+    <a href="index.html">Home</a>
+    <a href="games.html">Games</a>
+    <a href="media.html">Media</a>
+    <a href="settings.html">Settings</a>
+    <a href="account.html" class="active">👤</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-header"><h1>Account</h1></div>
+
+  <section class="home-panel account-panel">
+
+    <div id="user-box" style="display:none;">
+      Logged in as:
+      <br>
+      <span id="user-email" style="color:var(--accent);"></span>
+      <br><br>
+      <button class="account-btn" id="logout-btn">Log Out</button>
+      <button class="account-btn" id="sync-btn">Sync Settings Now</button>
+    </div>
+
+    <div id="auth-box">
+      <div>Email</div>
+      <input id="email-input" type="email">
+
+      <div>Password</div>
+      <input id="pass-input" type="password">
+
+      <button class="account-btn" id="login-btn">Login</button>
+      <button class="account-btn" id="signup-btn">Create Account</button>
+
+      <div id="auth-status" style="margin-top:4px;color:var(--accent);font-size:8px;"></div>
+    </div>
+
+  </section>
+</main>
+
+<script type="module">
+import { auth, db } from "./firebase.js";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+import {
+  doc,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const emailEl = document.getElementById("email-input");
+const passEl = document.getElementById("pass-input");
+const statusEl = document.getElementById("auth-status");
+
+const userBox = document.getElementById("user-box");
+const authBox = document.getElementById("auth-box");
+const userEmail = document.getElementById("user-email");
+
+/* ---------------- LOGIN ---------------- */
+document.getElementById("login-btn").onclick = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, emailEl.value, passEl.value);
+    statusEl.textContent = "Logged in!";
+  } catch (err) {
+    statusEl.textContent = err.message;
+  }
+};
+
+/* ---------------- SIGN UP ---------------- */
+document.getElementById("signup-btn").onclick = async () => {
+  try {
+    await createUserWithEmailAndPassword(auth, emailEl.value, passEl.value);
+    statusEl.textContent = "Account created!";
+  } catch (err) {
+    statusEl.textContent = err.message;
+  }
+};
+
+/* ---------------- LOG OUT ---------------- */
+document.getElementById("logout-btn").onclick = () => {
+  signOut(auth);
+};
+
+/* ---------------- SYNC SETTINGS ---------------- */
+document.getElementById("sync-btn").onclick = async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const data = JSON.parse(JSON.stringify(localStorage));
+  await setDoc(doc(db, "settings", user.uid), data);
+
+  statusEl.textContent = "Synced settings!";
+};
+
+/* ---------------- AUTH STATE ---------------- */
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    userBox.style.display = "block";
+    authBox.style.display = "none";
+    userEmail.textContent = user.email;
+
+    const snap = await getDoc(doc(db, "settings", user.uid));
+    if (snap.exists()) {
+      const cloud = snap.data();
+      for (let k in cloud) localStorage.setItem(k, cloud[k]);
+      location.reload();
+    }
+  } else {
+    userBox.style.display = "none";
+    authBox.style.display = "block";
+  }
+});
+</script>
+
+</body>
+</html>

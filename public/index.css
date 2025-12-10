@@ -172,6 +172,32 @@
   font-size: 8px !important;
 }
 
+/* --- SETTINGS PAGE BUTTON FIX --- */
+.settings-page .proxy-btn {
+  font-size: 8px !important;
+  padding: 5px 10px !important;
+  height: auto !important;
+  border-width: 2px !important;
+  font-family: "Press Start 2P", system-ui, sans-serif !important;
+  letter-spacing: 0.05em;
+  width: auto !important;
+}
+
+/* Inputs in settings */
+.settings-page input,
+.settings-page select {
+  font-size: 8px !important;
+  padding: 6px 8px !important;
+  font-family: "Press Start 2P", system-ui, sans-serif !important;
+}
+
+/* Labels and small text */
+.settings-page label,
+.settings-page .motd-label {
+  font-size: 8px !important;
+}
+
+
 
 /* ========= REST OF YOUR ORIGINAL CSS (UNCHANGED) ========= */
 

@@ -15,6 +15,56 @@
   --header-h: 56px;
 }
 
+/* ACCOUNT PAGE */
+.account-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.account-block input {
+  width: 100%;
+  padding: 8px;
+  font-size: 10px;
+  margin-bottom: 10px;
+  border: 2px solid var(--border-hard);
+  background: #000;
+  color: var(--fg);
+  font-family: "Press Start 2P";
+}
+
+.account-btn {
+  width: 100%;
+  padding: 6px;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.auth-error {
+  font-size: 8px;
+  color: #ff6666;
+  padding-top: 4px;
+}
+
+.account-email {
+  font-size: 10px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.danger {
+  border-color: red;
+  color: red;
+  background: rgba(255,0,0,0.15);
+}
+
+
 /* ========= THEME VARIANTS (ONLY OVERRIDE COLORS, NOTHING ELSE) ========= */
 
 :root[data-theme="dark"] {

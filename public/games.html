@@ -2,69 +2,30 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
     <title>S0LACE • Games</title>
 
-    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="shortcut icon" content="favicon.ico" />
     <link rel="stylesheet" href="index.css" />
     <script src="global-hub.js" defer></script>
     <script src="register-sw.js" defer></script>
 
-    <style>
-      /* ================= LABELS ================= */
-      .games-section-label {
-        margin: 24px 0 12px;
-        font-family: "Press Start 2P";
-        font-size: 10px;
-        color: var(--accent);
-      }
-
-      /* ================= COLLECTION GRID ================= */
-      .collections-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 16px;
-        margin-bottom: 16px;
-      }
-
-      /* ================= COLLECTION PANEL ================= */
-      .collection-panel {
-        margin-bottom: 32px;
-      }
-
-      .collection-panel.hidden {
-        display: none;
-      }
-
-      .collection-games {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 16px;
-      }
-
-      /* ================= COLLECTION BADGE ================= */
-      .collection-badge {
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        background: var(--accent);
-        color: #000;
-        font-family: "Press Start 2P";
-        font-size: 6px;
-        padding: 3px 5px;
-        z-index: 2;
-      }
-    </style>
   </head>
 
   <body class="games-page">
     <header class="site-header">
-      <div class="site-title">S0LACE</div>
+      <div class="site-title">
+        S0LACE
+      </div>
       <nav class="site-nav">
         <a href="index.html">Home</a>
         <a href="games.html" class="active">Games</a>
         <a href="media.html">Media</a>
         <a href="settings.html">Settings</a>
+
       </nav>
     </header>
 
@@ -73,43 +34,7 @@
         <h1>Games</h1>
       </div>
 
-      <!-- ================= COLLECTIONS ================= -->
-      <div class="games-section-label">COLLECTIONS</div>
-
-      <div class="collections-grid">
-        <div class="game-card collection-card" data-col="sonic">
-          <div class="game-thumb">
-            <img src="thumbs/sonic-collection.png" />
-            <div class="game-overlay">SONIC</div>
-          </div>
-        </div>
-
-        <div class="game-card collection-card" data-col="motox3m">
-          <div class="game-thumb">
-            <img src="thumbs/moto-collection.png" />
-            <div class="game-overlay">MOTO X3M</div>
-          </div>
-        </div>
-
-        <div class="game-card collection-card" data-col="dadish">
-          <div class="game-thumb">
-            <img src="thumbs/dadish-collection.png" />
-            <div class="game-overlay">DADISH</div>
-          </div>
-        </div>
-
-        <div class="game-card collection-card" data-col="emulated">
-          <div class="game-thumb">
-            <img src="thumbs/emulator.png" />
-            <div class="game-overlay">EMULATED</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ================= COLLECTION OUTPUT ================= -->
-      <div id="collection-panel" class="collection-panel hidden"></div>
-
-      <!-- ================= SEARCH ================= -->
+      <!-- SEARCH -->
       <div class="games-search-wrap">
         <span class="search-label">SEARCH &gt;</span>
         <input
@@ -120,8 +45,9 @@
         />
       </div>
 
-      <!-- ================= EMPTY MAIN GRID ================= -->
-      <div class="game-grid" id="game-grid"><div class="game-grid" id="game-grid"> <a
+      <div class="game-grid" id="game-grid">
+        <!-- your existing cards kept as-is -->
+        <a
           class="game-card"
           href="https://forms.gle/VH47pgHw1kWAFuDY6"
           data-name="suggestions"
@@ -966,86 +892,67 @@
             <img src="thumbs/idle-breakout.png" alt="idle-breakout" />
             <div class="game-overlay">Idle Breakout</div>
           </div>
-         </a>
+        </a>
       </div>
+
       <div id="game-empty">No games match that search.</div>
     </main>
 
-    <!-- ================= COLLECTION LOGIC ================= -->
-    <script>
-      const COLLECTIONS = {
-        sonic: [
-          { name: "Sonic 1", href: "player.html?game=games/sonic/1.html", thumb: "thumbs/sonic1.jpeg" },
-          { name: "Sonic 2", href: "player.html?game=games/sonic/2.html", thumb: "thumbs/sonic2.jpeg" },
-          { name: "Sonic 3", href: "player.html?game=games/sonic/3.html", thumb: "thumbs/sonic3.jpeg" },
-          { name: "Sonic & Knuckles", href: "player.html?game=games/sonic/sonick.html", thumb: "thumbs/sonick.jpeg" }
-        ],
-        motox3m: [
-          { name: "Moto X3M", href: "player.html?game=games/motox3m-all/1.html", thumb: "thumbs/x3m1.jpeg" },
-          { name: "Moto X3M 2", href: "player.html?game=games/motox3m-all/2.html", thumb: "thumbs/x3m2.jpeg" },
-          { name: "Moto X3M Winter", href: "player.html?game=games/motox3m-all/winter.html", thumb: "thumbs/x3mwinter.jpeg" }
-        ],
-        dadish: [
-          { name: "Dadish", href: "player.html?game=games/deadish/1.html", thumb: "thumbs/dadish.jpeg" },
-          { name: "Dadish 2", href: "player.html?game=games/deadish/2.html", thumb: "thumbs/dadish2.jpeg" },
-          { name: "Dadish 3", href: "player.html?game=games/deadish/3.html", thumb: "thumbs/dadish3.jpeg" }
-        ],
-        emulated: [
-          { name: "Bitlife", href: "player.html?game=games/bitlife/index.html", thumb: "thumbs/bitlife.png" }
-        ]
-      };
-
-      const panel = document.getElementById("collection-panel");
-
-      function renderCollection(games) {
-        const sorted = [...games].sort((a, b) =>
-          a.name.localeCompare(b.name)
-        );
-
-        panel.innerHTML = `
-          <div class="collection-games">
-            ${sorted.map(g => `
-              <a class="game-card" href="${g.href}" data-name="${g.name.toLowerCase()}">
-                <div class="game-thumb">
-                  <span class="collection-badge">COLLECTION</span>
-                  <img src="${g.thumb}">
-                  <div class="game-overlay">${g.name}</div>
-                </div>
-              </a>
-            `).join("")}
-          </div>
-        `;
-
-        panel.classList.remove("hidden");
-      }
-
-      document.querySelectorAll(".collection-card").forEach(card => {
-        card.addEventListener("click", () => {
-          const games = COLLECTIONS[card.dataset.col];
-          if (!games) return;
-          renderCollection(games);
-        });
-      });
-    </script>
-
-    <!-- ================= SEARCH (COLLECTION-SAFE) ================= -->
     <script>
       const searchInput = document.getElementById("game-search");
+      const grid = document.getElementById("game-grid");
       const emptyMsg = document.getElementById("game-empty");
 
-      searchInput.addEventListener("input", () => {
-        const q = searchInput.value.toLowerCase();
-        const cards = panel.querySelectorAll(".game-card");
-        let shown = 0;
+      // grab all cards once
+      let cards = Array.from(grid.querySelectorAll(".game-card"));
 
-        cards.forEach(c => {
-          const match = !q || c.dataset.name.includes(q);
-          c.style.display = match ? "" : "none";
-          if (match) shown++;
+      // sort A–Z, but keep "suggestions" pinned at the very top
+      function sortGamesAZ() {
+        const pinned = cards.find(
+          (card) => (card.dataset.name || "").toLowerCase() === "suggestions"
+        );
+
+        const rest = cards
+          .filter((card) => card !== pinned)
+          .sort((a, b) => {
+            const aName = (a.dataset.name || "").toLowerCase();
+            const bName = (b.dataset.name || "").toLowerCase();
+            if (aName < bName) return -1;
+            if (aName > bName) return 1;
+            return 0;
+          });
+
+        // clear and re-append in sorted order
+        grid.innerHTML = "";
+        if (pinned) grid.appendChild(pinned);
+        rest.forEach((card) => grid.appendChild(card));
+
+        // update cards array to match new order
+        cards = pinned ? [pinned, ...rest] : rest;
+      }
+
+      function filterGames() {
+        const q = (searchInput.value || "").trim().toLowerCase();
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const name = (card.dataset.name || "").toLowerCase();
+          const match = !q || name.includes(q);
+          card.style.display = match ? "" : "none";
+          if (match) visibleCount++;
         });
 
-        emptyMsg.style.display = q && shown === 0 ? "block" : "none";
-      });
+        if (emptyMsg) {
+          emptyMsg.style.display = q && visibleCount === 0 ? "block" : "none";
+        }
+      }
+
+      // run sort once on load
+      sortGamesAZ();
+
+      if (searchInput) {
+        searchInput.addEventListener("input", filterGames);
+      }
     </script>
   </body>
 </html>

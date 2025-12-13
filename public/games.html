@@ -21,45 +21,13 @@
 
       .collections-grid {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 14px;
-        margin-bottom: 18px;
-      }
-
-      @media (max-width: 1000px) {
-        .collections-grid { grid-template-columns: repeat(3, 1fr); }
-      }
-      @media (max-width: 600px) {
-        .collections-grid { grid-template-columns: repeat(2, 1fr); }
-      }
-
-      .collection-card {
-        background: var(--panel);
-        border: 2px solid var(--border-hard);
-        padding: 12px 8px;
-        text-align: center;
-        cursor: pointer;
-        font-family: "Press Start 2P";
-        font-size: 8px;
-      }
-
-      .collection-card img {
-        width: 48px;
-        height: 48px;
-        margin-bottom: 6px;
-        object-fit: contain;
-      }
-
-      .collection-card:hover {
-        border-color: var(--accent);
-        box-shadow: 0 0 12px var(--accent);
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
       }
 
       .collection-panel {
-        border: 2px solid var(--border-hard);
-        background: var(--panel);
-        padding: 14px;
-        margin-bottom: 24px;
+        margin-bottom: 30px;
       }
 
       .collection-panel.hidden {
@@ -68,26 +36,8 @@
 
       .collection-games {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 14px;
-      }
-
-      .collection-game {
-        text-decoration: none;
-        color: var(--fg);
-        font-family: "Press Start 2P";
-        font-size: 7px;
-        text-align: center;
-      }
-
-      .collection-game img {
-        width: 100%;
-        border: 2px solid var(--border-hard);
-      }
-
-      .collection-game:hover img {
-        border-color: var(--accent);
-        box-shadow: 0 0 10px var(--accent);
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
       }
     </style>
   </head>
@@ -112,22 +62,32 @@
       <div class="games-section-label">COLLECTIONS</div>
 
       <div class="collections-grid">
-        <div class="collection-card" data-col="arcade">
-          <img src="thumbs/sonic-collection.png" />
-          <div>SONIC</div>
+        <div class="game-card collection-card" data-col="sonic">
+          <div class="game-thumb">
+            <img src="thumbs/sonic-collection.png" />
+            <div class="game-overlay">SONIC</div>
+          </div>
         </div>
-        <div class="collection-card" data-col="retro">
-          <img src="thumbs/moto-collection.png" />
-          <div>MOTO X3M</div>
-        </div>
-        <div class="collection-card" data-col="platformer">
-          <img src="thumbs/dadish-collection.png" />
-          <div>DADISH</div>
-        </div>
-        <div class="collection-card" data-col="puzzle">
-          <img src="thumbs/emulator.png" />
-          <div>EMULATED GAMES</div>
 
+        <div class="game-card collection-card" data-col="motox3m">
+          <div class="game-thumb">
+            <img src="thumbs/moto-collection.png" />
+            <div class="game-overlay">MOTO X3M</div>
+          </div>
+        </div>
+
+        <div class="game-card collection-card" data-col="dadish">
+          <div class="game-thumb">
+            <img src="thumbs/dadish-collection.png" />
+            <div class="game-overlay">DADISH</div>
+          </div>
+        </div>
+
+        <div class="game-card collection-card" data-col="emulated">
+          <div class="game-thumb">
+            <img src="thumbs/emulator.png" />
+            <div class="game-overlay">EMULATED</div>
+          </div>
         </div>
       </div>
 
@@ -136,12 +96,16 @@
       <!-- ================= SEARCH ================= -->
       <div class="games-search-wrap">
         <span class="search-label">SEARCH &gt;</span>
-        <input id="game-search" type="text" placeholder="search for your favorite games" />
+        <input
+          id="game-search"
+          type="text"
+          placeholder="search for your favorite games"
+          autocomplete="off"
+        />
       </div>
 
-      <!-- ================= GAMES GRID (UNCHANGED) ================= -->
-      <div class="game-grid" id="game-grid">
-       <a
+      <!-- ================= EMPTY GRID (INTENTIONAL) ================= -->
+      <div class="game-grid" id="game-grid"> <a
           class="game-card"
           href="https://forms.gle/VH47pgHw1kWAFuDY6"
           data-name="suggestions"
@@ -987,81 +951,71 @@
             <div class="game-overlay">Idle Breakout</div>
           </div>
         </a>
-      </div>
-
+      </div> 
       <div id="game-empty">No games match that search.</div>
     </main>
 
     <!-- ================= COLLECTION LOGIC ================= -->
     <script>
       const COLLECTIONS = {
-        arcade: [
-          { name: "Geometry Dash", href: "player.html?game=games/geometrydash/index.html", thumb: "thumbs/geometrydash.png" },
-          { name: "Drift Boss", href: "player.html?game=games/drift-boss/index.html", thumb: "thumbs/drift-boss.jpeg" },
-          { name: "Gun Spin", href: "player.html?game=games/gun-spin/index.html", thumb: "thumbs/gun-spin.jpeg" }
+        sonic: [
+          { name: "Sonic 1", href: "player.html?game=games/sonic/1.html", thumb: "thumbs/sonic1.jpeg" },
+          { name: "Sonic 2", href: "player.html?game=games/sonic/2.html", thumb: "thumbs/sonic2.jpeg" },
+          { name: "Sonic 3", href: "player.html?game=games/sonic/3.html", thumb: "thumbs/sonic3.jpeg" },
+          { name: "Sonic & Knuckles", href: "player.html?game=games/sonic/sonick.html", thumb: "thumbs/sonick.jpeg" }
         ],
-        retro: [
-          { name: "Retro Bowl", href: "player.html?game=games/retrobowl/index.html", thumb: "thumbs/retrobowl.png" },
-          { name: "Retro Bowl College", href: "player.html?game=games/retrobowlcollege/index.html", thumb: "thumbs/retrobowlcollege.png" },
-          { name: "Sonic", href: "player.html?game=games/sonic/1.html", thumb: "thumbs/sonic1.jpeg" }
+
+        motox3m: [
+          { name: "Moto X3M", href: "player.html?game=games/motox3m-all/1.html", thumb: "thumbs/x3m1.jpeg" },
+          { name: "Moto X3M 2", href: "player.html?game=games/motox3m-all/2.html", thumb: "thumbs/x3m2.jpeg" },
+          { name: "Moto X3M Winter", href: "player.html?game=games/motox3m-all/winter.html", thumb: "thumbs/x3mwinter.jpeg" }
         ],
-        platformer: [
-          { name: "Level Devil", href: "player.html?game=games/level-devil/index.html", thumb: "thumbs/leveldevil.jpeg" },
-          { name: "Cluster Rush", href: "player.html?game=games/cluster-rush/index.html", thumb: "thumbs/cluster-rush.jpeg" }
+
+        dadish: [
+          { name: "Dadish", href: "player.html?game=games/deadish/1.html", thumb: "thumbs/dadish.jpeg" },
+          { name: "Dadish 2", href: "player.html?game=games/deadish/2.html", thumb: "thumbs/dadish2.jpeg" },
+          { name: "Dadish 3", href: "player.html?game=games/deadish/3.html", thumb: "thumbs/dadish3.jpeg" }
+        ],
+
+        emulated: [
+          { name: "Bitlife", href: "player.html?game=games/bitlife/index.html", thumb: "thumbs/bitlife.png" }
         ]
       };
 
       const panel = document.getElementById("collection-panel");
 
       document.querySelectorAll(".collection-card").forEach(card => {
-        card.onclick = () => {
+        card.addEventListener("click", () => {
           const games = COLLECTIONS[card.dataset.col];
-          if (!games) return panel.classList.add("hidden");
+          if (!games) return;
 
           panel.innerHTML = `
             <div class="collection-games">
               ${games.map(g => `
-                <a class="collection-game" href="${g.href}">
-                  <img src="${g.thumb}">
-                  <div>${g.name}</div>
+                <a class="game-card" href="${g.href}">
+                  <div class="game-thumb">
+                    <img src="${g.thumb}">
+                    <div class="game-overlay">${g.name}</div>
+                  </div>
                 </a>
               `).join("")}
             </div>
           `;
+
           panel.classList.remove("hidden");
           panel.scrollIntoView({ behavior: "smooth", block: "start" });
-        };
+        });
       });
     </script>
 
-    <!-- ================= SEARCH + SORT (UNCHANGED) ================= -->
+    <!-- ================= SEARCH (READY FOR LATER) ================= -->
     <script>
       const searchInput = document.getElementById("game-search");
-      const grid = document.getElementById("game-grid");
       const emptyMsg = document.getElementById("game-empty");
-      let cards = Array.from(grid.querySelectorAll(".game-card"));
 
-      function sortGamesAZ() {
-        cards.sort((a, b) =>
-          (a.dataset.name || "").localeCompare(b.dataset.name || "")
-        );
-        grid.innerHTML = "";
-        cards.forEach(c => grid.appendChild(c));
-      }
-
-      function filterGames() {
-        const q = searchInput.value.toLowerCase();
-        let shown = 0;
-        cards.forEach(c => {
-          const match = !q || (c.dataset.name || "").includes(q);
-          c.style.display = match ? "" : "none";
-          if (match) shown++;
-        });
-        emptyMsg.style.display = q && shown === 0 ? "block" : "none";
-      }
-
-      sortGamesAZ();
-      searchInput.addEventListener("input", filterGames);
+      searchInput.addEventListener("input", () => {
+        emptyMsg.style.display = "block";
+      });
     </script>
   </body>
 </html>

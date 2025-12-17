@@ -60,37 +60,46 @@
     }
 
     .home-version {
-      margin-top: 6px;
-      font-size: 12px;
+      margin-top: 14px;
+      font-size: 11px;
       color: var(--fg-dim);
       font-family: "Press Start 2P";
     }
 
     /* ===== SEARCH ===== */
     .proxy-wrap {
-      margin-top: 42px;
+      margin-top: 48px;
     }
 
     #sj-form {
       display: flex;
-      gap: 10px;
     }
 
     #sj-address {
-      flex: 1;
-      padding: 18px 20px;
+      width: 100%;
+      padding: 18px 22px;
       font-size: 16px;
-      border-radius: 10px;
+      border-radius: 16px;
+
+      background: rgba(255,255,255,0.03);
+      color: var(--fg);
+
+      border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+      outline: none;
+
+      transition: border-color .2s ease, box-shadow .2s ease;
     }
 
-    .proxy-btn {
-      padding: 18px 26px;
-      font-size: 14px;
-      border-radius: 10px;
-      cursor: pointer;
+    #sj-address::placeholder {
+      color: var(--fg-dim);
     }
 
-    /* ===== VISITOR META ===== */
+    #sj-address:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    /* ===== VISITORS ===== */
     .visitor-meta {
       margin-top: 36px;
       display: flex;
@@ -120,20 +129,23 @@
 <main>
   <div class="home-wrap">
 
-    <!-- TITLE -->
     <div class="home-title">S0LACE</div>
     <div class="home-version">v1.1.0</div>
 
     <!-- SEARCH -->
     <div class="proxy-wrap">
       <form id="sj-form">
-        <input id="sj-search-engine"
-               value="https://www.google.com/search?q=%s"
-               type="hidden" />
-        <input id="sj-address"
-               type="text"
-               placeholder="search or enter a url…" />
-        <button class="proxy-btn" type="submit">GO</button>
+        <input
+          id="sj-search-engine"
+          value="https://www.google.com/search?q=%s"
+          type="hidden"
+        />
+        <input
+          id="sj-address"
+          type="text"
+          placeholder="search or enter a url…"
+          autocomplete="off"
+        />
       </form>
 
       <div id="sj-error"></div>
@@ -179,10 +191,10 @@ updateSideIcons();
 window.addEventListener("storage", updateSideIcons);
 </script>
 
-<!-- FIXED FIREBASE VISITOR COUNTER -->
+<!-- 🔥 STABLE FIREBASE VISITOR COUNTER -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, get, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyBbgy76ThxHaKlOhpiLQ6Nw4ekR1b9t3DA",
@@ -193,42 +205,39 @@ const app = initializeApp({
 
 const db = getDatabase(app);
 
+const elAll = document.getElementById("vis-all");
+const elToday = document.getElementById("vis-today");
+const elWeek = document.getElementById("vis-week");
+
 const todayKey = () => new Date().toISOString().split("T")[0];
 const weekKey = () => {
-  const d = new Date(), j = new Date(d.getFullYear(), 0, 1);
+  const d = new Date(), j = new Date(d.getFullYear(),0,1);
   return "week_" + Math.ceil((((d - j) / 86400000) + j.getDay() + 1) / 7);
 };
 
-async function update(increment) {
+async function render() {
   try {
-    const allRef = ref(db,"visitors/all");
-    const todayRef = ref(db,"visitors/today/"+todayKey());
-    const weekRef = ref(db,"visitors/week/"+weekKey());
-
     const [a,t,w] = await Promise.all([
-      get(allRef).then(s=>s.val()||0),
-      get(todayRef).then(s=>s.val()||0),
-      get(weekRef).then(s=>s.val()||0)
+      get(ref(db,"visitors/all")).then(s=>s.val()||0),
+      get(ref(db,"visitors/today/"+todayKey())).then(s=>s.val()||0),
+      get(ref(db,"visitors/week/"+weekKey())).then(s=>s.val()||0)
     ]);
-
-    if(increment){
-      await Promise.all([
-        set(allRef,a+1),
-        set(todayRef,t+1),
-        set(weekRef,w+1)
-      ]);
-    }
-
-    vis-all.textContent = a + (increment?1:0);
-    vis-today.textContent = t + (increment?1:0);
-    vis-week.textContent = w + (increment?1:0);
-  } catch(e){}
+    elAll.textContent = a;
+    elToday.textContent = t;
+    elWeek.textContent = w;
+  } catch {
+    elAll.textContent = elToday.textContent = elWeek.textContent = "—";
+  }
 }
 
-if(!sessionStorage.getItem("s0lace-counted")){
+if (!sessionStorage.getItem("s0lace-counted")) {
   sessionStorage.setItem("s0lace-counted","1");
-  update(true);
-}else update(false);
+  runTransaction(ref(db,"visitors/all"), v => (v||0)+1);
+  runTransaction(ref(db,"visitors/today/"+todayKey()), v => (v||0)+1);
+  runTransaction(ref(db,"visitors/week/"+weekKey()), v => (v||0)+1);
+}
+
+render();
 </script>
 
 </body>

@@ -344,36 +344,6 @@ setInterval(() => {
 }, 500);
 </script>
 
-<script>
-function getAccentColor() {
-  // must match what global-hub.js stores
-  return localStorage.getItem("s0laceAccent") || "gray";
-}
-
-function updateSideIcons() {
-  const accent = getAccentColor();
-
-  document.querySelectorAll(".side-icon").forEach(link => {
-    const icon = link.dataset.icon;
-    const img = link.querySelector("img");
-    const active = link.classList.contains("active");
-
-    img.src = `thumbs/${icon}/${active ? accent : "gray"}.png`;
-  });
-}
-
-// mark active link
-document.querySelectorAll(".side-icon").forEach(link => {
-  if (link.href === location.href) link.classList.add("active");
-});
-
-// run
-updateSideIcons();
-
-// live update when theme changes
-window.addEventListener("storage", updateSideIcons);
-</script>
-
 
 <!-- FIREBASE VISITOR COUNTER (FIXED) -->
 <script type="module">
@@ -422,25 +392,25 @@ if(!sessionStorage.getItem("s0lace-counted")){
 </script>
 
 <script>
-const ICON_MAP = {
-  green: "green",
-  amber: "amber",
-  violet: "purple",
-  white: "white"
-};
+function getAccent() {
+  return localStorage.getItem("s0laceAccent") || "gray";
+}
 
 function updateSideIcons() {
-  const accent = localStorage.getItem("s0laceAccent") || "gray";
-  const color = ICON_MAP[accent] || "gray";
+  const accent = getAccent();
 
-  document.querySelectorAll(".side-icon").forEach(a => {
-    const name = a.dataset.icon;
-    const img = a.querySelector("img");
-    const isActive = a.href === location.href;
+  document.querySelectorAll(".side-icon").forEach(link => {
+    const icon = link.dataset.icon; // home, games, media, settings
+    const img = link.querySelector("img");
+    const active = link.classList.contains("active");
 
-    img.src = `thumbs/${name} ${isActive ? color : "gray"}.png`;
+    img.src = `thumbs/${icon}/${active ? accent : "gray"}.png`;
   });
 }
+
+document.querySelectorAll(".side-icon").forEach(link => {
+  if (link.href === location.href) link.classList.add("active");
+});
 
 updateSideIcons();
 window.addEventListener("storage", updateSideIcons);

@@ -2,24 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>S0LACE</title>
 
   <link rel="shortcut icon" href="favicon.ico" />
   <link rel="stylesheet" href="index.css" />
 
-  <!-- Scramjet stack -->
+  <!-- Scramjet -->
   <script src="/scram/scramjet.all.js"></script>
   <script src="baremux/index.js" defer></script>
   <script src="epoxy/index.js" defer></script>
   <script src="register-sw.js" defer></script>
   <script src="search.js" defer></script>
   <script src="index.js" defer></script>
-
-  <!-- global theme / settings -->
   <script src="global-hub.js" defer></script>
 
   <style>
+    body {
+      min-height: 100vh;
+    }
+
     main {
       min-height: 100vh;
       display: flex;
@@ -42,38 +44,40 @@
       z-index: 1;
     }
 
-    /* Center layout */
-    .home-center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    /* ===== LAYOUT ===== */
+    .home-shell {
+      display: grid;
       gap: 28px;
       width: 100%;
-      max-width: 640px;
-      padding: 20px;
+      max-width: 720px;
+      padding: 32px;
     }
 
-    .home-logo-mark {
-      font-family: "Press Start 2P";
-      font-size: 48px;
-      color: var(--fg);
+    .hero-block {
       text-align: center;
+      padding: 28px;
+      border: 2px solid var(--border-hard);
+      background: var(--panel);
     }
 
-    .home-version {
+    .hero-title {
+      font-family: "Press Start 2P";
+      font-size: 52px;
+      color: var(--fg);
+    }
+
+    .hero-version {
       font-family: "Press Start 2P";
       font-size: 10px;
+      margin-top: 8px;
       color: var(--fg-dim);
-      margin-top: 6px;
-      text-align: center;
     }
 
-    /* Proxy search */
-    .home-proxy-panel {
-      width: 100%;
+    /* ===== PROXY ===== */
+    .proxy-block {
       padding: 22px;
-      background: var(--panel);
       border: 2px solid var(--border-hard);
+      background: var(--panel);
     }
 
     #sj-form {
@@ -84,48 +88,48 @@
 
     #sj-address {
       flex: 1;
-      padding: 14px;
+      padding: 16px;
       font-size: 16px;
-      font-family: inherit;
     }
 
     .proxy-btn {
-      padding: 14px 22px;
+      padding: 16px 24px;
       font-size: 14px;
       cursor: pointer;
     }
 
-    /* Visitor panel */
-    .visitor-stats {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      margin-top: 12px;
+    /* ===== VISITORS ===== */
+    .stats-block {
+      padding: 18px;
+      border: 2px solid var(--border-hard);
+      background: var(--panel);
     }
 
-    .visitor-box {
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
       text-align: center;
       font-family: "Press Start 2P";
-      flex: 1;
     }
 
-    .visitor-label {
+    .stat-label {
       font-size: 8px;
       color: var(--fg-dim);
     }
 
-    .visitor-number {
-      font-size: 14px;
+    .stat-value {
+      font-size: 16px;
       color: var(--accent);
+      margin-top: 6px;
       text-shadow: 0 0 6px var(--accent);
-      margin-top: 4px;
     }
   </style>
 </head>
 
 <body>
 
-<!-- RIGHT SIDE ICON HEADER (unchanged logic) -->
+<!-- SIDE ICON NAV (unchanged logic) -->
 <nav class="side-header">
   <a href="index.html" class="side-icon" data-icon="home"><img /></a>
   <a href="games.html" class="side-icon" data-icon="games"><img /></a>
@@ -134,30 +138,25 @@
 </nav>
 
 <main>
+  <div class="home-shell">
 
-  <section class="home-center">
-
-    <!-- LOGO -->
-    <div>
-      <div class="home-logo-mark">S0LACE</div>
-      <div class="home-version">v1.0.5</div>
-    </div>
+    <!-- HERO -->
+    <section class="hero-block">
+      <div class="hero-title">S0LACE</div>
+      <div class="hero-version">v1.1.0</div>
+    </section>
 
     <!-- PROXY -->
-    <section class="home-proxy-panel">
+    <section class="proxy-block">
       <div class="proxy-label">PR0XY &gt;</div>
 
       <form id="sj-form">
-        <input
-          id="sj-search-engine"
-          value="https://www.google.com/search?q=%s"
-          type="hidden"
-        />
-        <input
-          id="sj-address"
-          type="text"
-          placeholder="type a url or search…"
-        />
+        <input id="sj-search-engine"
+               value="https://www.google.com/search?q=%s"
+               type="hidden" />
+        <input id="sj-address"
+               type="text"
+               placeholder="enter url or search…" />
         <button class="proxy-btn" type="submit">GO</button>
       </form>
 
@@ -166,25 +165,24 @@
     </section>
 
     <!-- VISITORS -->
-    <section class="home-panel" style="width:100%;">
-      <div class="visitor-stats">
-        <div class="visitor-box">
-          <div class="visitor-label">TODAY</div>
-          <div id="vis-today" class="visitor-number">—</div>
+    <section class="stats-block">
+      <div class="stats-grid">
+        <div>
+          <div class="stat-label">TODAY</div>
+          <div id="vis-today" class="stat-value">—</div>
         </div>
-        <div class="visitor-box">
-          <div class="visitor-label">THIS WEEK</div>
-          <div id="vis-week" class="visitor-number">—</div>
+        <div>
+          <div class="stat-label">THIS WEEK</div>
+          <div id="vis-week" class="stat-value">—</div>
         </div>
-        <div class="visitor-box">
-          <div class="visitor-label">ALL TIME</div>
-          <div id="vis-all" class="visitor-number">—</div>
+        <div>
+          <div class="stat-label">ALL TIME</div>
+          <div id="vis-all" class="stat-value">—</div>
         </div>
       </div>
     </section>
 
-  </section>
-
+  </div>
 </main>
 
 <!-- PROXY DETECTION -->
@@ -195,7 +193,7 @@ setInterval(() => {
 }, 500);
 </script>
 
-<!-- SIDE ICON COLOR LOGIC -->
+<!-- SIDE ICON COLOR SYNC -->
 <script>
 function getAccent() {
   return localStorage.getItem("s0laceAccent") || "gray";
@@ -216,7 +214,7 @@ updateSideIcons();
 window.addEventListener("storage", updateSideIcons);
 </script>
 
-<!-- FIREBASE VISITOR COUNTER (UNCHANGED LOGIC) -->
+<!-- ✅ FIXED FIREBASE VISITOR COUNTER -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -230,36 +228,47 @@ const app = initializeApp({
 
 const db = getDatabase(app);
 
-function todayKey(){ return new Date().toISOString().split("T")[0]; }
-function weekKey(){
-  const d=new Date(),j=new Date(d.getFullYear(),0,1);
-  return "week_"+Math.ceil((((d-j)/86400000)+j.getDay()+1)/7);
-}
+const todayKey = () => new Date().toISOString().split("T")[0];
+const weekKey = () => {
+  const d = new Date();
+  const j = new Date(d.getFullYear(), 0, 1);
+  return "week_" + Math.ceil((((d - j) / 86400000) + j.getDay() + 1) / 7);
+};
 
-async function updateCounters(inc=false){
-  const allRef=ref(db,"visitors/all");
-  const todayRef=ref(db,"visitors/today/"+todayKey());
-  const weekRef=ref(db,"visitors/week/"+weekKey());
+async function safeUpdate(increment) {
+  try {
+    const allRef = ref(db, "visitors/all");
+    const todayRef = ref(db, "visitors/today/" + todayKey());
+    const weekRef = ref(db, "visitors/week/" + weekKey());
 
-  const all=(await get(allRef)).val()||0;
-  const today=(await get(todayRef)).val()||0;
-  const week=(await get(weekRef)).val()||0;
+    const [all, today, week] = await Promise.all([
+      get(allRef).then(s => s.val() || 0),
+      get(todayRef).then(s => s.val() || 0),
+      get(weekRef).then(s => s.val() || 0)
+    ]);
 
-  if(inc){
-    await set(allRef,all+1);
-    await set(todayRef,today+1);
-    await set(weekRef,week+1);
+    if (increment) {
+      await Promise.all([
+        set(allRef, all + 1),
+        set(todayRef, today + 1),
+        set(weekRef, week + 1)
+      ]);
+    }
+
+    document.getElementById("vis-all").textContent = all + (increment ? 1 : 0);
+    document.getElementById("vis-today").textContent = today + (increment ? 1 : 0);
+    document.getElementById("vis-week").textContent = week + (increment ? 1 : 0);
+  } catch (e) {
+    console.warn("Visitor counter failed:", e);
   }
-
-  vis-all.textContent = all + (inc?1:0);
-  vis-today.textContent = today + (inc?1:0);
-  vis-week.textContent = week + (inc?1:0);
 }
 
-if(!sessionStorage.getItem("s0lace-counted")){
-  sessionStorage.setItem("s0lace-counted","1");
-  updateCounters(true);
-}else updateCounters(false);
+if (!sessionStorage.getItem("s0lace-counted")) {
+  sessionStorage.setItem("s0lace-counted", "1");
+  safeUpdate(true);
+} else {
+  safeUpdate(false);
+}
 </script>
 
 </body>

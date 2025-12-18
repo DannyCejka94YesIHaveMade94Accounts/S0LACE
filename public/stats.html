@@ -1,168 +1,72 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>S0LACE • Stats</title>
+  <meta charset="utf-8">
+  <title>S0LACE • Stats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="shortcut icon" href="favicon.ico" />
-<link rel="stylesheet" href="index.css" />
-
-<script src="global-hub.js" defer></script>
-
-<style>
-/* ===== PAGE ===== */
-main {
-  padding: 24px;
-  padding-right: 90px;
-}
-
-/* ===== RIGHT ICON HEADER ===== */
-.side-header {
-  position: fixed;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  z-index: 999;
-}
-
-.side-icon img {
-  width: 26px;
-  height: 26px;
-  opacity: 0.5;
-  transition: 0.2s;
-}
-
-.side-icon.active img,
-.side-icon:hover img {
-  opacity: 1;
-  filter: drop-shadow(0 0 6px var(--accent));
-}
-
-/* ===== PANELS ===== */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
-  gap: 16px;
-}
-
-.stats-panel {
-  border: 2px solid var(--border-hard);
-  background: var(--panel);
-  padding: 16px;
-  font-family: "Press Start 2P";
-}
-
-.stats-title {
-  color: var(--accent);
-  font-size: 10px;
-  margin-bottom: 10px;
-}
-
-/* ===== LIST ===== */
-.stats-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.stats-list li {
-  display: flex;
-  justify-content: space-between;
-  font-size: 9px;
-  padding: 4px 0;
-  border-bottom: 1px dashed var(--border-soft);
-}
-
-.stats-list li:last-child {
-  border-bottom: none;
-}
-</style>
+  <link rel="stylesheet" href="index.css">
+  <script src="global-hub.js" defer></script>
 </head>
 
 <body>
 
-<!-- RIGHT ICON NAV -->
 <nav class="side-header">
-  <a class="side-icon" href="index.html"><img data-icon="home"></a>
-  <a class="side-icon" href="games.html"><img data-icon="games"></a>
-  <a class="side-icon" href="media.html"><img data-icon="media"></a>
-  <a class="side-icon active" href="stats.html"><img data-icon="stats"></a>
-  <a class="side-icon" href="settings.html"><img data-icon="settings"></a>
+  <a href="index.html" class="side-icon" data-icon="home"><img></a>
+  <a href="games.html" class="side-icon" data-icon="games"><img></a>
+  <a href="media.html" class="side-icon" data-icon="media"><img></a>
+  <a href="settings.html" class="side-icon" data-icon="settings"><img></a>
 </nav>
 
-<main>
-  <h1 class="page-title">Traffic Stats</h1>
+<main style="padding:40px; max-width:900px; margin:auto">
+  <h1>Traffic Stats</h1>
 
-  <div class="stats-grid">
+  <h2>Countries</h2>
+  <ul id="countries"></ul>
 
-    <section class="stats-panel">
-      <div class="stats-title">TOP COUNTRIES</div>
-      <ul id="country-list" class="stats-list"></ul>
-    </section>
-
-    <section class="stats-panel">
-      <div class="stats-title">TOP REGIONS (US)</div>
-      <ul id="region-list" class="stats-list"></ul>
-    </section>
-
-  </div>
+  <h2>Regions</h2>
+  <ul id="regions"></ul>
 </main>
 
-<!-- ICON COLOR SYNC -->
-<script>
-function syncIcons() {
-  const accent = localStorage.getItem("s0laceAccent") || "green";
-  document.querySelectorAll("[data-icon]").forEach(img=>{
-    const name = img.dataset.icon;
-    img.src = `icons/${name}-${accent}.svg`;
-  });
-}
-syncIcons();
-window.addEventListener("storage", syncIcons);
-</script>
-
-<!-- FIREBASE STATS -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyBbgy76ThxHaKlOhpiLQ6Nw4ekR1b9t3DA",
-  authDomain: "s0lace-web.firebaseapp.com",
-  databaseURL: "https://s0lace-web-default-rtdb.firebaseio.com",
-  projectId: "s0lace-web"
+  databaseURL: "https://s0lace-web-default-rtdb.firebaseio.com"
 });
-
 const db = getDatabase(app);
 
-async function loadStats() {
-  const countrySnap = await get(ref(db,"visitors/countries"));
-  const regionSnap = await get(ref(db,"visitors/regions"));
+async function loadList(path, el) {
+  const snap = await get(ref(db, path));
+  const data = snap.val() || {};
 
-  const countries = Object.entries(countrySnap.val() || {})
-    .sort((a,b)=>b[1]-a[1]).slice(0,10);
-
-  const regions = Object.entries(regionSnap.val() || {})
-    .filter(([k])=>k.startsWith("US-"))
-    .sort((a,b)=>b[1]-a[1]).slice(0,10);
-
-  const cList = document.getElementById("country-list");
-  const rList = document.getElementById("region-list");
-
-  countries.forEach(([k,v])=>{
-    cList.innerHTML += `<li><span>${k}</span><span>${v}</span></li>`;
-  });
-
-  regions.forEach(([k,v])=>{
-    rList.innerHTML += `<li><span>${k}</span><span>${v}</span></li>`;
-  });
+  el.innerHTML = "";
+  Object.entries(data)
+    .sort((a,b)=>b[1]-a[1])
+    .forEach(([k,v])=>{
+      const li = document.createElement("li");
+      li.textContent = `${k}: ${v}`;
+      el.appendChild(li);
+    });
 }
 
-loadStats();
+loadList("geo/countries", document.getElementById("countries"));
+loadList("geo/regions", document.getElementById("regions"));
+</script>
+
+<script>
+/* side icon sync */
+function getAccent() {
+  return localStorage.getItem("s0laceAccent") || "gray";
+}
+document.querySelectorAll(".side-icon").forEach(a=>{
+  const img=a.querySelector("img");
+  const icon=a.dataset.icon;
+  const active=location.pathname.endsWith(a.getAttribute("href"));
+  img.src=`thumbs/${icon}/${active?getAccent():"gray"}.png`;
+});
 </script>
 
 </body>

@@ -30,12 +30,12 @@ body {
     background: var(--bg); 
     color: var(--fg); 
     font-family: sans-serif; 
-    overflow: hidden; 
+    overflow-x: hidden; 
 }
 
 main { min-height: 100vh; display: flex; justify-content: center; align-items: center; }
 
-/* --- LOADING SCREEN --- */
+/* --- LOADER --- */
 #loader {
     position: fixed; inset: 0; background: var(--bg); 
     display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -48,71 +48,45 @@ main { min-height: 100vh; display: flex; justify-content: center; align-items: c
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* --- UI COMPONENTS --- */
+/* --- UI --- */
 .home-wrap { max-width: 720px; width: 100%; padding: 32px; text-align: center; }
-
 .home-title { 
     font-family: 'Press Start 2P', cursive; 
-    font-size: 64px; 
+    font-size: 54px; /* Slightly adjusted size for better fit */
     font-weight: 800; 
     color: var(--fg); 
     margin: 0;
 }
-
-.home-version { 
-    margin-top: 14px; 
-    font-size: 10px; 
-    font-family: "Press Start 2P"; 
-    color: var(--fg-dim); 
-}
+.home-version { margin-top: 14px; font-size: 10px; font-family: "Press Start 2P"; color: var(--fg-dim); }
 
 .home-status {
-  margin-top: 16px;
-  font-family: "Press Start 2P";
-  font-size: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  color: var(--fg-dim);
+  margin-top: 16px; font-family: "Press Start 2P"; font-size: 10px;
+  display: flex; justify-content: center; gap: 10px; color: var(--fg-dim);
 }
 
 #clock { color: var(--fg); }
 #battery { color: var(--accent); }
 
-/* --- PROXY INPUT --- */
-.proxy-wrap { margin-top: 28px; position: relative; }
+.proxy-wrap { margin-top: 28px; }
 #sj-address {
-  width: 100%;
-  padding: 18px 22px;
-  font-size: 16px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  color: var(--fg);
-  border: 2px solid var(--accent);
-  outline: none;
-  box-sizing: border-box;
+  width: 100%; padding: 18px 22px; font-size: 16px; border-radius: 16px;
+  background: rgba(255,255,255,0.05); color: var(--fg);
+  border: 2px solid var(--accent); outline: none; box-sizing: border-box;
 }
 #sj-address:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* --- VISITOR META --- */
 .visitor-meta {
-  margin-top: 36px;
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  font-family: "Press Start 2P";
-  font-size: 10px;
-  color: var(--fg-dim);
+  margin-top: 36px; display: flex; justify-content: center; gap: 28px;
+  font-family: "Press Start 2P"; font-size: 10px; color: var(--fg-dim);
 }
 .visitor-meta span { color: var(--accent); }
 </style>
 </head>
-
 <body>
 
 <div id="loader">
     <div class="spinner"></div>
-    <div style="font-size: 10px;">LOADING ASSETS...</div>
+    <div style="font-size: 10px;">INITIALIZING S0LACE...</div>
 </div>
 
 <nav class="side-header">
@@ -136,7 +110,7 @@ main { min-height: 100vh; display: flex; justify-content: center; align-items: c
   <div class="proxy-wrap">
     <form id="sj-form">
       <input type="hidden" id="sj-search-engine" value="https://www.google.com/search?q=%s">
-      <input id="sj-address" placeholder="Checking proxy..." autocomplete="off" disabled>
+      <input id="sj-address" placeholder="Checking for Proxy Engine..." autocomplete="off" disabled>
     </form>
   </div>
 
@@ -149,25 +123,7 @@ main { min-height: 100vh; display: flex; justify-content: center; align-items: c
 </main>
 
 <script>
-/* --- CORE UI LOGIC --- */
-
-// 1. Hide Loader when Scramjet is ready
-function checkScramjet() {
-    if (window.scramjet || typeof scramjet !== 'undefined') {
-        const loader = document.getElementById('loader');
-        loader.style.opacity = '0';
-        setTimeout(() => loader.style.display = 'none', 500);
-        
-        const input = document.getElementById('sj-address');
-        input.disabled = false;
-        input.placeholder = "Enter a URL or search Google";
-    } else {
-        setTimeout(checkScramjet, 100);
-    }
-}
-window.addEventListener('load', checkScramjet);
-
-// 2. Icons & Accents
+// UI HANDLING
 function getAccent(){ return localStorage.getItem("s0laceAccent") || "gray"; }
 function updateIcons(){
   document.querySelectorAll(".side-icon").forEach(a => {
@@ -180,7 +136,6 @@ function updateIcons(){
 }
 updateIcons();
 
-// 3. Clock & Battery
 function updateClock(){
   const d = new Date();
   let h = d.getHours(), m = String(d.getMinutes()).padStart(2,"0");
@@ -196,24 +151,36 @@ if(navigator.getBattery){
   });
 }
 
-// 4. Proxy Submission
+// PROXY INITIALIZATION CHECK
+function initProxy() {
+    if (window.scramjet || typeof scramjet !== 'undefined') {
+        document.getElementById('loader').style.opacity = '0';
+        setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+        document.getElementById('sj-address').disabled = false;
+        document.getElementById('sj-address').placeholder = "Enter a URL or search Google";
+    } else {
+        // If it takes more than 5 seconds, warn the user
+        setTimeout(() => {
+            if (document.getElementById('sj-address').disabled) {
+                document.getElementById('sj-address').placeholder = "Error: Scramjet files missing";
+            }
+        }, 5000);
+        setTimeout(initProxy, 200);
+    }
+}
+window.addEventListener('load', initProxy);
+
 document.getElementById("sj-form").addEventListener("submit", e => {
   e.preventDefault();
   const address = document.getElementById("sj-address").value.trim();
-  const engine = document.getElementById("sj-search-engine").value;
-  
   if(!address) return;
-
+  const engine = document.getElementById("sj-search-engine").value;
   const url = /^https?:\/\//i.test(address) ? address : engine.replace("%s", encodeURIComponent(address));
   
-  // Visual feedback
-  document.getElementById('sj-address').value = "Connecting...";
-  document.getElementById('sj-address').disabled = true;
-
   if (window.scramjet) {
-    window.scramjet.open(url);
-  } else if (typeof scramjet !== 'undefined') {
-    scramjet.open(url);
+      window.scramjet.open(url);
+  } else {
+      alert("Proxy engine not found. Please upload the 'scram' folder.");
   }
 });
 </script>
@@ -232,26 +199,22 @@ async function initStats() {
     try {
         const app = getApps().length ? getApps()[0] : initializeApp(cfg);
         const db = getDatabase(app);
-
         const today = () => new Date().toISOString().split("T")[0];
         const week = () => {
             const d = new Date(), j = new Date(d.getFullYear(), 0, 1);
             return "week_" + Math.ceil((((d - j) / 86400000) + j.getDay() + 1) / 7);
         }
-
         if(!sessionStorage.getItem("s0lace-counted")){
             sessionStorage.setItem("s0lace-counted", "1");
             runTransaction(ref(db, "visitors/all"), v => (v || 0) + 1);
             runTransaction(ref(db, "visitors/today/" + today()), v => (v || 0) + 1);
             runTransaction(ref(db, "visitors/week/" + week()), v => (v || 0) + 1);
         }
-
         const [a, t, w] = await Promise.all([
             get(ref(db, "visitors/all")),
             get(ref(db, "visitors/today/" + today())),
             get(ref(db, "visitors/week/" + week()))
         ]);
-
         document.getElementById("vis-all").textContent = a.val() || 0;
         document.getElementById("vis-today").textContent = t.val() || 0;
         document.getElementById("vis-week").textContent = w.val() || 0;
@@ -259,6 +222,5 @@ async function initStats() {
 }
 initStats();
 </script>
-
 </body>
 </html>

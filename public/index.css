@@ -1987,5 +1987,44 @@ a.game-card img {
   border-radius: 18px;
 }
 
+  .game-overlay {
+  display: none;
+}
+
+.game-card:hover .game-overlay {
+  display: flex;
+  position: absolute;
+  inset: 0;
+
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(20, 20, 20, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-radius: 18px;
+}
+
+  .game-card,
+.game-thumb {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+  .game-thumb {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.game-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+}
+
 }
 

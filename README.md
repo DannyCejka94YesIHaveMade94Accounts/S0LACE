@@ -27,10 +27,10 @@ Project S0lace is a self-hostable, open-source web proxy + entertainment hub des
 
 ## 🖥️ Live Demo 
 
-https://project-s0lace.onrender.com
+https://s0lace.fly.dev
 
 ## 🚀 Quick Deploy (Free Options)
-
+## **NOTE:** S0LACE Cannot be hosted as a static site on sites such as Vercel, Github Pages, Netfliy, etc.
 ### 1. Render (Recommended – Free tier)
 1. Fork this repo
 2. Go to [render.com](https://render.com) → New Web Service

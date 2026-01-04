@@ -1862,4 +1862,34 @@ a.media-card img {
   display: block;
 }
 
+  /* === ABSOLUTE SQUARE REMOVAL === */
+
+a.game-card,
+a.game-card *,
+a.game-card::before,
+a.game-card::after {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
 }
+
+/* Force rounding at EVERY LEVEL */
+a.game-card {
+  border-radius: 22px !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+a.game-card::before,
+a.game-card::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Images */
+a.game-card img {
+  display: block;
+  border-radius: 22px !important;
+}
+

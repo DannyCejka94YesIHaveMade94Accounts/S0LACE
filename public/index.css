@@ -32,6 +32,46 @@
   padding: 16px;
 }
 
+/* ===== FORCE GLASS CONTINUE WATCHING ===== */
+
+/* The big gray container */
+.continue-watching,
+.media-section,
+.media-row,
+.section-card,
+.section-container {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Kill ANY inner solid backgrounds */
+.continue-watching *,
+.media-section *,
+.media-row *,
+.section-card * {
+  background-color: transparent !important;
+}
+
+/* Prevent square edges behind posters */
+.poster,
+.poster img,
+.poster-wrapper {
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+/* Fix the faint square line you keep seeing */
+.poster::before,
+.poster-wrapper::before {
+  display: none !important;
+}
+
+
 .media-item {
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(18px);

@@ -4,41 +4,109 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <title>S0LACE • Media Player</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <link rel="shortcut icon" content="favicon.ico" />
     <link rel="stylesheet" href="index.css" />
+
     <script src="baremux/index.js"></script>
     <script src="epoxy/index.js"></script>
+
+    <script src="register-sw.js" defer></script>
+    <script src="global-hub.js" defer></script>
+
     <style>
       body, html {
-        margin: 0; padding: 0; height: 100%;
-        background-color: #0f0f0f; font-family: 'Press Start 2P', cursive;
-        display: flex; overflow: hidden;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #0f0f0f;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
-      .player-main { display: flex; flex-direction: column; height: 100vh; width: 100%; }
+
+      .player-main {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        width: 100%;
+      }
+
+      /* Rounded Iframe Container */
       .player-frame-wrap {
-        position: relative; flex: 1; margin: 15px 15px 5px 15px;
-        border-radius: 20px; overflow: hidden;
-        background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        position: relative;
+        flex: 1;
+        margin: 15px 15px 5px 15px; /* Spacing for the rounded look */
+        border-radius: 20px; 
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       }
-      #media-frame { width: 100%; height: 100%; border: none; display: block; }
-      .player-controls { height: 75px; display: flex; align-items: center; padding: 0 25px; }
+
+      #media-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+      }
+
+      /* Control Area below the player */
+      .player-controls {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+      }
+
+      /* Rounded Icon Button - Bottom Left */
       #reload-btn {
-        background: rgba(255, 255, 255, 0.08); color: white;
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
         border: 1px solid rgba(255, 255, 255, 0.15);
-        width: 50px; height: 50px; border-radius: 50%;
-        font-size: 20px; cursor: pointer; transition: 0.2s;
-        display: flex; align-items: center; justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-      #reload-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+
+      #reload-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      /* Loading Overlay */
       .player-loading {
-        position: absolute; inset: 0; display: flex; align-items: center;
-        justify-content: center; flex-direction: column;
-        font-size: 10px; color: #fff; background: #000; z-index: 2;
-        text-align: center; padding: 20px;
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        font-size: 11px;
+        color: #888;
+        background: #000;
+        z-index: 2;
+        text-align: center;
+        padding: 16px;
       }
-      #player-loading-sub { margin-top: 15px; opacity: 0.6; font-size: 8px; }
+
+      /* Hide the original info/buttons bar */
+      .player-info { display: none; }
+      
+      .no-src {
+        color: white;
+        text-align: center;
+        padding-top: 50px;
+      }
     </style>
   </head>
+
   <body>
     <nav class="side-header">
       <a href="index.html" class="side-icon" data-icon="home"><img></a>
@@ -51,17 +119,30 @@
       <div class="player-frame-wrap">
         <div id="player-loading" class="player-loading">
           CONNECTING TO PROXY…
-          <span id="player-loading-sub">PLEASE WAIT...</span>
+          <span id="player-loading-sub" style="margin-top: 8px; opacity: 0.6;">
+            Please wait while the media prepares.
+          </span>
         </div>
-        <iframe id="media-frame" src="about:blank" allowfullscreen></iframe>
+
+        <iframe
+          id="media-frame"
+          src="about:blank"
+          allowfullscreen
+          allow="fullscreen; picture-in-picture; encrypted-media"
+        ></iframe>
       </div>
+
       <div class="player-controls">
         <button id="reload-btn" title="Reload Media">↻</button>
+      </div>
+
+      <div id="player-error" class="no-src" style="display:none;">
+        No media URL provided.
       </div>
     </main>
 
     <script>
-      // Sidebar logic
+      // Side Icon Logic
       function getAccent() { return localStorage.getItem("s0laceAccent") || "gray"; }
       function updateSideIcons() {
         const accent = getAccent();
@@ -74,24 +155,57 @@
         });
       }
       updateSideIcons();
+      window.addEventListener("storage", updateSideIcons);
     </script>
 
     <script>
       (async () => {
         const params = new URLSearchParams(window.location.search);
         const src = params.get("src");
-        const frame = document.getElementById("media-frame");
-        const loadingEl = document.getElementById("player-loading");
 
-        if (src) {
-          frame.addEventListener("load", () => { loadingEl.style.display = "none"; });
+        const frame = document.getElementById("media-frame");
+        const errorEl = document.getElementById("player-error");
+        const frameWrap = document.querySelector(".player-frame-wrap");
+        const loadingEl = document.getElementById("player-loading");
+        const loadingSub = document.getElementById("player-loading-sub");
+        const reloadBtn = document.getElementById("reload-btn");
+
+        if (!src) {
+          if (frameWrap) frameWrap.style.display = "none";
+          if (errorEl) errorEl.style.display = "block";
+          return;
+        }
+
+        // Reload function
+        reloadBtn.addEventListener("click", () => {
+          loadingEl.style.display = "flex";
+          frame.src = src;
+        });
+
+        /* -------------------------------------------
+           BAREMUX INIT
+        -------------------------------------------- */
+        try {
+          const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+          const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+
+          if ((await connection.getTransport()) !== "/epoxy/index.mjs") {
+            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+          }
+        } catch (err) {
+          console.error("BareMux Error", err);
+          if (loadingSub) loadingSub.textContent = "Proxy transport failed.";
+        }
+
+        /* -------------------------------------------
+           LOAD IFRAME
+        -------------------------------------------- */
+        if (frame) {
+          frame.addEventListener("load", () => {
+            if (loadingEl) loadingEl.style.display = "none";
+          });
           frame.src = src;
         }
-        
-        document.getElementById("reload-btn").addEventListener("click", () => {
-          loadingEl.style.display = "flex";
-          frame.src = frame.src;
-        });
       })();
     </script>
   </body>

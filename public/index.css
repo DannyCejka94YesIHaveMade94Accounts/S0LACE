@@ -2098,3 +2098,19 @@ a.game-card img {
   content: none !important;
   display: none !important;
 }
+
+  /* Remove borders and outlines from all images in the games section */
+.games-container img, 
+.game-icon img {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* Ensure links don't have borders or underlines */
+.games-container a,
+.game-icon a {
+    text-decoration: none;
+    border: none;
+}

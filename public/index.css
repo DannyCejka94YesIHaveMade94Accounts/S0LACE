@@ -2132,3 +2132,26 @@ a.game-card img {
     border-radius: 20px; 
     display: block;
 }
+
+  /* 1. Remove border from the main card */
+.game-card, a.game-card {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 20px; /* Makes it curved */
+    overflow: hidden;    /* Keeps image inside the curves */
+}
+
+/* 2. KILL THE "GHOST" BOX (The most likely culprit) */
+a.game-card:after {
+    display: none !important;
+    content: none !important;
+    border: none !important;
+}
+
+/* 3. Make sure the image inside is also curved */
+.game-card img {
+    border-radius: 20px !important;
+    border: none !important;
+}

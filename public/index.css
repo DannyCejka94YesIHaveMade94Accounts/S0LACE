@@ -1498,24 +1498,6 @@ h1::after {
 /* This part adds the "retro" scanline effect. 
    If you want the icons to be clean, you can delete this whole block. 
    Otherwise, I've added a curve to it so it matches the card. */
-.game-card::after,
-.app-card::after,
-.media-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;            /* ADDED: so the overlay is also curved */
-  background: repeating-linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.2) 0,
-      rgba(0, 0, 0, 0.2) 2px,
-      transparent 2px,
-      transparent 4px
-    );
-  mix-blend-mode: soft-light;
-  opacity: 0.2;
-  pointer-events: none;           /* Added so it doesn't block clicks */
-}
 
 .game-thumb,
 .app-thumb {

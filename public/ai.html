@@ -21,13 +21,12 @@
       .player-main {
         display: flex; flex-direction: column;
         height: 100vh; width: 100%;
-        font-family: sans-serif; /* Chat text is easier to read in sans-serif */
+        font-family: sans-serif;
       }
 
-      /* CHAT CONTAINER - CURVED STYLE */
       .chat-shell {
         flex: 1;
-        margin: 15px 15px 5px 15px;
+        margin: 15px;
         background: #050505;
         border-radius: 20px;
         border: 2px solid #1a1a1a;
@@ -37,7 +36,6 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       }
 
-      /* MESSAGES AREA */
       #chat-history {
         flex: 1;
         overflow-y: auto;
@@ -45,45 +43,46 @@
         display: flex;
         flex-direction: column;
         gap: 15px;
+        scroll-behavior: smooth;
       }
 
       .message {
-        max-width: 80%;
-        padding: 12px 16px;
-        border-radius: 15px;
-        line-height: 1.5;
+        max-width: 85%;
+        padding: 14px 18px;
+        border-radius: 18px;
+        line-height: 1.6;
         font-size: 14px;
+        word-wrap: break-word;
       }
 
       .user-message {
         align-self: flex-end;
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
       }
 
       .ai-message {
         align-self: flex-start;
         background: #111;
         border: 1px solid #333;
-        color: #ddd;
+        color: #eee;
       }
 
-      /* LOADING INDICATOR */
       .ai-loading {
         font-family: 'Press Start 2P', cursive;
         font-size: 8px;
         color: #00ff7f;
-        margin-bottom: 10px;
+        margin: 10px 20px;
         display: none;
       }
 
-      /* INPUT AREA */
       .chat-input-area {
-        padding: 15px;
+        padding: 20px;
         background: #0a0a0a;
         border-top: 1px solid #1a1a1a;
         display: flex;
-        gap: 10px;
+        gap: 12px;
       }
 
       #user-input {
@@ -91,43 +90,40 @@
         background: #000;
         border: 1px solid #333;
         color: white;
-        padding: 12px;
-        border-radius: 10px;
+        padding: 15px;
+        border-radius: 12px;
         outline: none;
+        font-size: 14px;
       }
 
-      #user-input:focus {
-        border-color: #555;
-      }
-
-      /* CONTROL BAR - BOTTOM LEFT RELOAD */
       .player-controls {
-        height: 75px;
+        height: 70px;
         display: flex;
         align-items: center;
         padding: 0 25px;
+        gap: 15px;
       }
 
-      #clear-btn {
+      .icon-btn {
         background: rgba(255, 255, 255, 0.08);
         color: white;
         border: 1px solid rgba(255, 255, 255, 0.15);
-        width: 50px; height: 50px;
+        width: 45px; height: 45px;
         border-radius: 50%;
-        font-size: 20px;
+        font-size: 18px;
         cursor: pointer;
         transition: 0.2s;
         display: flex; align-items: center; justify-content: center;
       }
 
-      #clear-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+      .icon-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
       
-      button#send-btn {
+      #send-btn {
         background: #fff;
         color: #000;
         border: none;
-        padding: 0 20px;
-        border-radius: 10px;
+        padding: 0 25px;
+        border-radius: 12px;
         font-weight: bold;
         cursor: pointer;
       }
@@ -139,79 +135,106 @@
       <a href="index.html" class="side-icon" data-icon="home"><img></a>
       <a href="games.html" class="side-icon" data-icon="games"><img></a>
       <a href="media.html" class="side-icon" data-icon="media"><img></a>
+      <a href="ai.html" class="side-icon" data-icon="ai"><img></a>
       <a href="settings.html" class="side-icon" data-icon="settings"><img></a>
     </nav>
 
     <main class="player-main">
       <div class="chat-shell">
-        <div id="chat-history">
-          <div class="message ai-message">Hello. I am the S0LACE AI. How can I help you today?</div>
-        </div>
-        
-        <div id="ai-status" class="ai-loading" style="padding-left: 20px;">THINKING...</div>
-
+        <div id="chat-history"></div>
+        <div id="ai-status" class="ai-loading">THINKING...</div>
         <div class="chat-input-area">
-          <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
+          <input type="text" id="user-input" placeholder="Ask Gemini something..." autocomplete="off">
           <button id="send-btn">SEND</button>
         </div>
       </div>
 
       <div class="player-controls">
-        <button id="clear-btn" title="Clear Chat">↻</button>
+        <button id="clear-btn" class="icon-btn" title="Clear Chat">↻</button>
       </div>
     </main>
 
     <script>
       // === CONFIGURATION ===
       const GEMINI_API_KEY = "AIzaSyDEGQ7l66MwgwRVwwfDAszj4f82mYgfHpo";
-      
-      const chatHistory = document.getElementById('chat-history');
+      const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+      const chatHistoryContainer = document.getElementById('chat-history');
       const userInput = document.getElementById('user-input');
       const sendBtn = document.getElementById('send-btn');
       const clearBtn = document.getElementById('clear-btn');
       const aiStatus = document.getElementById('ai-status');
 
-      async function askAI() {
-        const prompt = userInput.value.trim();
-        if (!prompt) return;
+      // State Memory
+      let sessionMessages = JSON.parse(localStorage.getItem('solace_chat_history')) || [];
 
-        // Add user message to UI
-        addMessage(prompt, 'user-message');
+      function initChat() {
+        if (sessionMessages.length === 0) {
+          addMessage("Hello. Im S0LACE AI. How can I help?", 'ai-message', false);
+        } else {
+          sessionMessages.forEach(msg => {
+            renderMessage(msg.text, msg.role === 'user' ? 'user-message' : 'ai-message');
+          });
+        }
+      }
+
+      async function askAI() {
+        const text = userInput.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user-message', true);
         userInput.value = '';
         aiStatus.style.display = 'block';
 
+        // Prepare context for Gemini (Memory)
+        const contents = sessionMessages.map(m => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          parts: [{ text: m.text }]
+        }));
+
         try {
-          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+          const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }]
-            })
+            body: JSON.stringify({ contents })
           });
 
           const data = await response.json();
+          if (data.error) throw new Error(data.error.message);
+
           const aiText = data.candidates[0].content.parts[0].text;
-          
-          addMessage(aiText, 'ai-message');
+          addMessage(aiText, 'ai-message', true);
         } catch (error) {
-          addMessage("ERROR: Could not connect to Gemini API. Check your key.", 'ai-message');
+          console.error(error);
+          renderMessage("ERROR: " + error.message, 'ai-message');
         } finally {
           aiStatus.style.display = 'none';
         }
       }
 
-      function addMessage(text, className) {
+      function addMessage(text, className, save) {
+        renderMessage(text, className);
+        if (save) {
+          sessionMessages.push({ text, role: className === 'user-message' ? 'user' : 'model' });
+          localStorage.setItem('solace_chat_history', JSON.stringify(sessionMessages));
+        }
+      }
+
+      function renderMessage(text, className) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message ${className}`;
         msgDiv.textContent = text;
-        chatHistory.appendChild(msgDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        chatHistoryContainer.appendChild(msgDiv);
+        chatHistoryContainer.scrollTop = chatHistoryContainer.scrollHeight;
       }
 
       sendBtn.addEventListener('click', askAI);
       userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') askAI(); });
       clearBtn.addEventListener('click', () => {
-        chatHistory.innerHTML = '<div class="message ai-message">Chat cleared. How can I help?</div>';
+        localStorage.removeItem('solace_chat_history');
+        sessionMessages = [];
+        chatHistoryContainer.innerHTML = '';
+        addMessage("Memory cleared. I'm ready for a new topic.", 'ai-message', false);
       });
 
       // Sidebar Logic
@@ -226,6 +249,8 @@
           img.src = `thumbs/${icon}/${isActive ? accent : "gray"}.png`;
         });
       }
+
+      initChat();
       updateSideIcons();
     </script>
   </body>

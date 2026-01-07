@@ -4,6 +4,8 @@ import { hostname } from "node:os";
 import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
+import { aiRoute } from "./ai.js";
+
 
 import { scramjetPath } from "@mercuryworkshop/scramjet/path";
 import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
